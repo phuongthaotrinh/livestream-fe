@@ -2,11 +2,7 @@
 
 import {AdminMenu} from "@/layouts/admin/menu";
 import * as React from "react";
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    VideoCameraOutlined,
-} from '@ant-design/icons';
+import {Home,Menu } from "lucide-react"
 import {Layout, Button, theme, Grid} from 'antd';
 
 const {Header, Sider, Content} = Layout;
@@ -29,21 +25,22 @@ export default function AdminLayout({
                        collapsedWidth={xs ? 0 : undefined}
                        collapsible
                        collapsed={collapsed}
-                       width={256}
+                       width={200}
                 >
                     <div className="bg-black/40 h-16 pl-7">
-                        <div className="font-semibold text-white uppercase h-full flex items-center gap-x-3 justify-start">
-                            <VideoCameraOutlined />
-                            {!collapsed &&  <span> Gracie shop</span>}
+                        <div
+                            className="font-semibold text-white uppercase h-full flex items-center gap-x-3 justify-start">
+                            <Home className="w-4"/>
+                            {!collapsed && <span> Gracie shop</span>}
                         </div>
                     </div>
-                    <AdminMenu />
+                    <AdminMenu/>
                 </Sider>
                 <Layout>
                     <Header style={{padding: 0, background: colorBgContainer}}>
                         <Button
                             type="text"
-                            icon={collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
+                            icon={<Menu />}
                             onClick={() => setCollapsed(!collapsed)}
                             style={{
                                 fontSize: '16px',
@@ -58,7 +55,7 @@ export default function AdminLayout({
                             padding: 24,
                             minHeight: "100vh",
                             background: colorBgContainer,
-                            height:"auto"
+                            height: "auto"
                         }}
                     >
                         {children}

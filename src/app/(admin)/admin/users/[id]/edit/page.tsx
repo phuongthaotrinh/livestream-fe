@@ -8,7 +8,7 @@ import {useValidation} from "@/lib/hooks/use-validation"
 import {usersSchema} from "@/lib/validation/users"
 import { useParams} from "next/navigation";
 
-export default function UserIdPage() {
+export default function UserIdPageEdit() {
     const {id} = useParams();
     const [images, setImages] = React.useState([]);
     const [form, rule] = useValidation(usersSchema);

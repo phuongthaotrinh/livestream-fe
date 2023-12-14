@@ -1,15 +1,33 @@
 'use client'
-import {Button, Checkbox, Form, Input, Card} from 'antd';
+import {Button, Form, Input} from 'antd';
 import {Icons} from "@/components/common/icons"
 import * as React from "react";
 import {useValidation} from "@/lib/hooks/use-validation";
-import {authSigninSchema} from "@/lib/validation/users";
-
+import {authSigninSchema, IAuthSignin} from "@/lib/validation/users";
+import toast from "react-hot-toast"
+import {useRouter, redirect} from "next/navigation"
+import {catchError} from "@/lib/helpers"
+import {useAuth} from "@/lib/hooks/use-auth";
+import {useContext} from "react";
+import AuthContext from "@/lib/context/AuthProvider";
 
 export default function Signin() {
-    const [form, rule] = useValidation(authSigninSchema);
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
+    const [pending, startTransition] = React.useTransition();
+    const router = useRouter()
+    const [form, rule] = useValidation<IAuthSignin>(authSigninSchema);
+
+
+    const {signinAction} = useAuth()
+    const onFinish = (values: IAuthSignin) => {
+        startTransition(async () => {
+            try {
+                await signinAction({...values});
+                toast.success('login sucess..');
+                router.push('/')
+            } catch (err) {
+                catchError(err)
+            }
+        })
     };
 
 
@@ -53,7 +71,7 @@ export default function Signin() {
                             >
                                 <Form.Item name="email" label="Email" className="custom_ant_label" rules={[rule]}
                                            required>
-                                    <Input placeholder="John Doe"/>
+                                    <Input placeholder="johndoe@gmail.com"/>
                                 </Form.Item>
                                 <Form.Item name="password" label="Password" className="custom_ant_label" rules={[rule]}
                                            required>
@@ -61,6 +79,7 @@ export default function Signin() {
                                 </Form.Item>
                                 <Form.Item className=" mt-5">
                                     <Button htmlType="submit" type="primary"
+                                            disabled={pending}
                                             className="bg-black block w-full">Submit</Button>
                                 </Form.Item>
                             </Form>

@@ -14,4 +14,5 @@ export const useValidation = <T,>(schema: z.ZodObject<any, any, any, T>): [FormI
         },
     };
     return [form, rule];
+
 };

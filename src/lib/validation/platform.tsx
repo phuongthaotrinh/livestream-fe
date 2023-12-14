@@ -10,5 +10,12 @@ export const platformsSchema = z.object({
     }).describe('status')
 });
 
-export type IPlatform = z.infer<typeof platformsSchema>;
 
+export const platformsFieldsSchema = z.object({
+    name: z.string().min(3).describe("name"),
+    type: z.string().describe("type"),
+    id: z.string().describe('id')
+});
+
+export type IPlatform = z.infer<typeof platformsSchema>;
+export type IPlatformFields = z.infer<typeof platformsFieldsSchema>;

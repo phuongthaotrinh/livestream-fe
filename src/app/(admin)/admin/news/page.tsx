@@ -1,8 +1,9 @@
 
 import {PageHeader} from "@/components/common/page-header";
 import { NewsTableShell} from "@/components/shells/news-shell"
+import NewsCreatePage from "@/app/(admin)/admin/news/create/page";
 
-export default function UserPage() {
+export default function NewsPage() {
 
     return (
         <div>
