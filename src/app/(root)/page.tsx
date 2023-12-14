@@ -13,20 +13,20 @@ export default  function RootPage() {
     return (
         <div>
             <p>Đăng ký thông tin nền tảng</p>
-            <div>
-                <Card title={<>
-                    <img src={platforms.images} className="w-12 h-12 object-cover"/>
-                    <div>
-                        {platforms.name}
-                    </div>
-                </>}>
-                        <div className="card-content">
-                            <>
+            {/*<div>*/}
+            {/*    <Card title={<>*/}
+            {/*        <img src={platforms.images} className="w-12 h-12 object-cover"/>*/}
+            {/*        <div>*/}
+            {/*            {platforms.name}*/}
+            {/*        </div>*/}
+            {/*    </>}>*/}
+            {/*            <div className="card-content">*/}
+            {/*                <>*/}
 
-                            </>
-                        </div>
-                </Card>
-            </div>
+            {/*                </>*/}
+            {/*            </div>*/}
+            {/*    </Card>*/}
+            {/*</div>*/}
 
         </div>
     )

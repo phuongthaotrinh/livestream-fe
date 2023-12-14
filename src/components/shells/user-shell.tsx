@@ -7,7 +7,7 @@ import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
 import {catchError, formatDate} from "@/lib/helpers";
 import {Button} from "@/components/ui/button"
-import {Checkbox} from "antd"
+import {Checkbox,Tag } from "antd"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
-
+import {fallbackImg} from "@/lib/constants/fallbackImg";
+import useApiUsers from "@/app/_actions/users"
 interface ProductsTableShellProps {
     data: any[]
     pageCount: number
@@ -30,10 +31,8 @@ export  function UserTableShell({
                                              }: ProductsTableShellProps) {
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
+    const {deleteUser} = useApiUsers();
 
-    function deleteProductAction({id}: any) {
-
-    }
 
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
@@ -71,17 +70,37 @@ export  function UserTableShell({
                 enableSorting: false,
                 enableHiding: false,
             },
+            {
+                accessorKey: "image",
+                header: ({column}) => (
+                    <DataTableColumnHeader column={column} title="Image"/>
+                ),
+                cell: ({row}) => {
+                    const id = row.original.id as string;
+                    const images = row.original.images as string;
+                    return (
+                        <div className="lowercase truncate ">
+                            <Link href={`/admin/users/${id}`}>
 
+                                <img src={images ? images : fallbackImg}
+                                    className="w-12 h-12"
+
+                                />
+                            </Link>
+                        </div>
+                    )
+                },
+            },
             {
                 accessorKey: "name",
                 header: ({column}) => (
                     <DataTableColumnHeader column={column} title="Name"/>
                 ),
                 cell: ({row}) => {
-                    const id = row.original._id as string;
+                    const id = row.original.id as string;
                     return (
                         <div className="lowercase truncate ">
-                            <Link href={`/admin/movie-types/${id}`}>
+                            <Link href={`/admin/users/${id}`}>
 
                                 {row.getValue("name")}
                             </Link>
@@ -90,14 +109,38 @@ export  function UserTableShell({
                 },
             },
             {
-                accessorKey: "imdbId",
+                accessorKey: "fullName",
                 header: ({column}) => {
                     return (
-                        <DataTableColumnHeader column={column} title="imdbId" />
+                        <DataTableColumnHeader column={column} title="fullName" />
                     )
                 },
                 cell: ({row}) =>
-                    <div>{row.getValue("imdbId")}</div>,
+                    <div>{row.getValue("fullName")}</div>,
+            },
+            {
+                accessorKey: "email",
+                header: ({column}) => {
+                    return (
+                        <DataTableColumnHeader column={column} title="email" />
+                    )
+                },
+                cell: ({row}) =>
+                    <div>{row.getValue("email")}</div>,
+            },
+            {
+                accessorKey: "block",
+                header: ({column}) => {
+                    return (
+                        <DataTableColumnHeader column={column} title="status" />
+                    )
+                },
+                cell: ({row}) =>
+                    <div>
+                        <Tag color={row.getValue("block") == 0 ? "#87d068" : '#f50'}>
+                            {row.getValue("block") == 0 ? "active" : 'block'}
+                        </Tag>
+                    </div>,
             },
             {
                 accessorKey: "createdAt",
@@ -123,36 +166,33 @@ export  function UserTableShell({
                             <Button
                                 aria-label="Open menu"
                                 variant="ghost"
-                                className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+                                // className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                             >
-                                <MoreVertical className="h-4 w-4" aria-hidden="true"/>
+                                <MoreVertical className="h-4 w-4 text-black" aria-hidden="true"/>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[160px]">
                             <DropdownMenuItem >
                                 <Link
-                                    href={`/admin/movie-types/${row.original._id}`}
+                                    href={`/admin/users/${row.original.id}`}
                                 >
                                     Edit
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem >
-                                <Link href={`/movies/${row.original._id}`}>Client view</Link>
-                            </DropdownMenuItem>
-
                             <DropdownMenuSeparator/>
                             <DropdownMenuItem
                                 onClick={() => {
                                     startTransition(() => {
                                         row.toggleSelected(false)
                                         // @ts-ignore
-                                        toast.promise((deleteProductAction({id: row.original.id})),
+                                        toast.promise((deleteUser({id: row.original.id})),
                                             {
                                                 loading: "Deleting...",
                                                 success: () => "Product deleted successfully.",
                                                 error: (err: unknown) => catchError(err),
                                             }
                                         )
+
                                     })
                                 }}
                                 disabled={isPending}
@@ -175,7 +215,7 @@ export  function UserTableShell({
         toast.promise(
             Promise.all(
                 selectedRowIds.map((id) =>
-                    deleteProductAction({
+                    deleteUser({
                         id,
                     })
                 )
@@ -194,7 +234,16 @@ export  function UserTableShell({
         )
     }
 
-
+    const userStatus = [
+        {
+            label : 'avtive',
+            value: '0'
+        },
+        {
+            label : 'block',
+            value: '1'
+        }
+    ]
     return (
         <DataTable
             columns={columns}
@@ -204,6 +253,16 @@ export  function UserTableShell({
                 {
                     id: "name",
                     title: "name",
+                },
+            ]}
+            filterableColumns={[
+                {
+                    id: "block",
+                    title: "status",
+                    options: userStatus.map((category) => ({
+                        label: category.label,
+                        value: category.value,
+                    })),
                 },
             ]}
             newRowLink={`/admin/users/create`}

@@ -5,7 +5,7 @@ import {PageHeader} from "@/components/common/page-header";
 import * as React from "react";
 import {UploadFile} from "@/components/common/upload-file"
 import {useValidation} from "@/lib/hooks/use-validation"
-import {newsSchema} from "@/lib/validation/news";
+import {newsSchema,INews} from "@/lib/validation/news";
 import Link from "next/link";
 import {MoveLeft} from "lucide-react";
 import {TextEditor} from "@/components/common/text-editor"
@@ -16,7 +16,7 @@ import {buttonVariants} from "@/components/ui/button";
 export default function NewsCreatePage() {
 
     const [images, setImages] = React.useState<any[]>([]);
-    const [form, rule] = useValidation(newsSchema);
+    const [form, rule] = useValidation<INews>(newsSchema);
 
     const onFinish = (value: any) => {
         value.images = images;
@@ -101,6 +101,9 @@ export default function NewsCreatePage() {
                     </div>
                     <Form.Item name="title" label="title" className="custom_ant_label" rules={[rule]} required>
                         <Input placeholder="Doraemon ep 1"/>
+                    </Form.Item>
+                    <Form.Item name="preview" label="preview" className="custom_ant_label" rules={[rule]} required>
+                        <Input placeholder="Doraemon is the best "/>
                     </Form.Item>
                     <Form.Item name="content" label="content" className="custom_ant_label"
                                rules={[
