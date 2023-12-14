@@ -1,6 +1,6 @@
 'use client';
 
-import {Form, Button, Input, Space,Checkbox } from "antd"
+import {Form, Button, Input, Space, Checkbox, Select} from "antd"
 import {PageHeader} from "@/components/common/page-header";
 import * as React from "react"
 import {UploadFile} from "@/components/common/upload-file"
@@ -10,13 +10,24 @@ import Link from "next/link";
 import {MoveLeft, Plus} from "lucide-react";
 import clsx from "clsx";
 import {buttonVariants} from "@/components/ui/button";
-
-export default function UserCreatePage() {
+import useApiPlatform from "@/app/_actions/platforms"
+import {v4 as uuid} from "uuid";
+import {useRouter} from "next/navigation"
+export default function PlatformCreatePage() {
+    const router = useRouter()
     const [images, setImages] = React.useState([]);
     const [form, rule] = useValidation(platformsSchema);
+// https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702562725/z4737848713350_247e3bbbb66bdb950a80776cbc9ce43e_imga53.jpg
+    const {platformFields} = useApiPlatform();
+    console.log('platformFields', platformFields)
 
     const onFinish = (value: any) => {
-        console.log(value)
+        const fields = platformFields && platformFields?.filter((item: any) => value.fieds.includes(item.id));
+        const id = uuid();
+        const payload = ({...value, fields, id});
+        localStorage.setItem('flatforms', JSON.stringify(payload));
+        handleReset();
+        router.push('/')
     }
 
     const handleReset = () => {
@@ -26,28 +37,28 @@ export default function UserCreatePage() {
 
     return (
         <>
-           <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
-               <PageHeader title="Create" desc="create new platform"/>
-               <div className="flex justify-end">
-                   <Link aria-label="Create new row" href="/admin/news">
-                       <div
-                           className={clsx(
-                               buttonVariants({
-                                   variant: "outline",
-                                   size: "sm",
-                                   className: "h-8",
-                               })
-                           )}
-                       >
-                           <MoveLeft className="mr-2 h-4 w-4" aria-hidden="true"/>
-                           Back
-                       </div>
-                   </Link>
-               </div>
-           </div>
+            <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
+                <PageHeader title="Create" desc="create new platform"/>
+                <div className="flex justify-end">
+                    <Link aria-label="Create new row" href="/admin/news">
+                        <div
+                            className={clsx(
+                                buttonVariants({
+                                    variant: "outline",
+                                    size: "sm",
+                                    className: "h-8",
+                                })
+                            )}
+                        >
+                            <MoveLeft className="mr-2 h-4 w-4" aria-hidden="true"/>
+                            Back
+                        </div>
+                    </Link>
+                </div>
+            </div>
             <div className="my-6">
                 <Form name="form1" layout="vertical"
-                      initialValues={{ status: true }}
+                      initialValues={{status: true}}
                       onFinish={onFinish} form={form}>
                     <div className="mb-3">
                         <Form.Item
@@ -105,8 +116,19 @@ export default function UserCreatePage() {
 
                     >
                         <Checkbox>
-                            {Form.useWatch('status', form)== true ? 'Show' : "Hidden"}
+                            {Form.useWatch('status', form) == true ? 'Show' : "Hidden"}
                         </Checkbox>
+                    </Form.Item>
+                    <Form.Item name="fieds" label="fieds" rules={[rule]} required>
+                        <Select
+                            placeholder="Select a option and change input text above"
+                            allowClear
+                            mode="multiple"
+                        >
+                            {platformFields && platformFields.map((item: any, index: any) => (
+                                <Select.Option key={index} value={item.id}>{item.name}</Select.Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                     <Space align="end" className="mt-3">
                         <Form.Item>

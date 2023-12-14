@@ -1,18 +1,33 @@
 'use client'
-import {Button, Checkbox, Form, Input, Card} from 'antd';
+import {Button, Form, Input} from 'antd';
 import {Icons} from "@/components/common/icons"
 import * as React from "react";
 import {useValidation} from "@/lib/hooks/use-validation";
-import {authSignupSchema} from "@/lib/validation/users";
+import {authSignupSchema, IAuthSignup} from "@/lib/validation/users";
+import {signupAction} from "@/app/_actions/users"
+import toast from "react-hot-toast"
+import {useRouter} from "next/navigation"
+import {catchError} from "@/lib/helpers"
+import { SignUp } from "@clerk/nextjs";
 
 
 export default function Signup() {
-    //@ts-ignore
-    const [form, rule] = useValidation(authSignupSchema);
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-    };
+    const [pending, startTransition] = React.useTransition();
+    const router = useRouter()
 
+    //@ts-ignore
+    const [form, rule] = useValidation<IAuthSignup>(authSignupSchema);
+    const onFinish = async (values: IAuthSignup) => {
+        startTransition(async () => {
+            try {
+                await signupAction({...values})
+                toast.success("Register successfully.")
+                router.push("/signin")
+            } catch (err) {
+                catchError(err)
+            }
+        })
+    };
 
     return (
         <div>
@@ -57,22 +72,32 @@ export default function Signup() {
                                            required>
                                     <Input placeholder="John Doe"/>
                                 </Form.Item>
+                                <Form.Item name="name" label="Name" className="custom_ant_label" rules={[rule]}
+                                           required>
+                                    <Input placeholder="John Doe"/>
+                                </Form.Item>
+                                <Form.Item name="fullName" label="Full Name" className="custom_ant_label" rules={[rule]}
+                                           required>
+                                    <Input placeholder="John Doe"/>
+                                </Form.Item>
                                 <Form.Item name="password" label="Password" className="custom_ant_label" rules={[rule]}
                                            required>
                                     <Input.Password placeholder="*******"/>
                                 </Form.Item>
-                                <Form.Item name="verifyPassword" label="verifyPassword" className="custom_ant_label" rules={[rule]}
+                                <Form.Item name="verifyPassword" label="verifyPassword" className="custom_ant_label"
+                                           rules={[rule]}
                                            required>
                                     <Input.Password placeholder="*******"/>
                                 </Form.Item>
                                 <Form.Item className=" mt-5">
                                     <Button htmlType="submit" type="primary"
+                                            disabled={pending}
                                             className="bg-black block w-full">Submit</Button>
                                 </Form.Item>
                             </Form>
 
                             <div className="mt-4 text-sm text-gray-600 text-center">
-                                <p>Already have an account? <a href="/signup" className="text-black hover:underline">Register
+                                <p>Have an account? <a href="/signin" className="text-black hover:underline">Login
                                     here</a>
                                 </p>
                             </div>

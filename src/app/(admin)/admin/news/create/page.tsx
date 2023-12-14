@@ -13,7 +13,7 @@ import clsx from "clsx";
 import {buttonVariants} from "@/components/ui/button";
 
 
-export default function UserCreatePage() {
+export default function NewsCreatePage() {
 
     const [images, setImages] = React.useState<any[]>([]);
     const [form, rule] = useValidation(newsSchema);

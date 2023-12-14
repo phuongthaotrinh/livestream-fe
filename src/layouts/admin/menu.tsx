@@ -28,9 +28,13 @@ const items: MenuProps['items'] = [
     ]),
     getItem('PLatform', 'PLatform', <LayoutGrid  className="w-4 h-4" />, [
         getItem(<Link href="/admin/platform">List</Link>, 'PLatform1'),
+        getItem(<Link href="/admin/platform/fieds">Platform fields</Link>, 'Rolesfieds1'),
     ]),
     getItem('News', 'News', <Newspaper  className="w-4 h-4" />, [
         getItem(<Link href="/admin/news">List</Link>, 'News1'),
+    ]),
+    getItem('Roles', 'Roles', <Newspaper  className="w-4 h-4" />, [
+        getItem(<Link href="/admin/roles">List</Link>, 'Roles1'),
     ]),
 
 ];
