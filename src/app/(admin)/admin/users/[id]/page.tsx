@@ -1,29 +1,49 @@
 'use client';
 
-import {Icons} from "@/components/common/icons"
 
-import {Card, Button, Input, Space, theme,Collapse} from "antd"
+import {Card, Button, Space, theme, Collapse} from "antd"
 import {PageHeader} from "@/components/common/page-header";
 import * as React from "react"
 import {useParams} from "next/navigation";
 import Link from "next/link";
 import {MoveLeft, Pencil, ChevronRight, ChevronDown} from "lucide-react";
 import {platform} from "@/lib/constants/platform";
-import type { CollapseProps } from 'antd';
 import clsx from "clsx";
 import {buttonVariants} from "@/components/ui/button";
-
+import useApiUsers from "@/app/_actions/users";
+import {toast} from "react-hot-toast";
+import {catchError} from "@/lib/helpers";
+import {IUsers} from "@/lib/validation/users";
 
 export default function UserIdPage() {
     const {id} = useParams();
+    const [isPending, startTransition] = React.useTransition();
+    const [userEdit, setUserEdit] = React.useState<IUsers | undefined>(undefined)
+    const {getUser} = useApiUsers();
+
+    React.useEffect(() => {
+        startTransition(() => {
+            toast.promise((getUser(id)),
+                {
+                    loading: "loading...",
+                    success: ({user}: any) => {
+                        setUserEdit(user);
+                        return "Get infomation successfully."
+                    },
+                    error: (err: unknown) => catchError(err),
+                }
+            )
+
+        })
+    }, []);
+
     const {
         token: {colorTextBase},
     } = theme.useToken();
-
     const PlatformUser = () => {
         return (
             <>
-                <div className="grid grid-cols-2 gap-6" >
+                <div className="grid grid-cols-2 gap-6">
                     {platform.map((item, index) => (
 
                         <Card key={index}
@@ -57,47 +77,43 @@ export default function UserIdPage() {
         return (
             <>
 
-                    <div className="max-w-xs">
-                        <div className="bg-white shadow-xl rounded-lg py-3">
-                            <div className="photo-wrapper p-2 text-center">
-                                <img className="w-32 h-32 rounded-full mx-auto" src="https://www.gravatar.com/avatar/2acfb745ecf9d4dccb3364752d17f65f?s=260&d=mp" alt="John Doe" />
+                <div className="max-w-xs">
+                    <div className="py-3">
+                        <div className="p-2">
+                            <h3 className="text-center text-xl text-gray-900 font-medium leading-8">{userEdit?.fullName}</h3>
+                            <div className="text-center text-gray-400 text-xs font-semibold">
+                                <p>{userEdit?.name}</p>
                             </div>
-                            <div className="p-2">
-                                <h3 className="text-center text-xl text-gray-900 font-medium leading-8">Joh Doe</h3>
-                                <div className="text-center text-gray-400 text-xs font-semibold">
-                                    <p>Web Developer</p>
-                                </div>
-                                <table className="text-xs my-3">
-                                    <tbody><tr>
-                                        <td className="px-2 py-2 text-gray-500 font-semibold">Address</td>
-                                        <td className="px-2 py-2">Chatakpur-3, Dhangadhi Kailali</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-2 py-2 text-gray-500 font-semibold">Phone</td>
-                                        <td className="px-2 py-2">+977 9955221114</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-2 py-2 text-gray-500 font-semibold">Email</td>
-                                        <td className="px-2 py-2">john@exmaple.com</td>
-                                    </tr>
-                                    </tbody></table>
+                            <table className="text-xs my-3">
+                                <tbody>
+                                <tr>
+                                    <td className="px-2 py-2 text-gray-500 font-semibold">Address</td>
+                                    <td className="px-2 py-2">Chatakpur-3, Dhangadhi Kailali</td>
+                                </tr>
+                                <tr>
+                                    <td className="px-2 py-2 text-gray-500 font-semibold">Phone</td>
+                                    <td className="px-2 py-2">+977 9955221114</td>
+                                </tr>
+                                <tr>
+                                    <td className="px-2 py-2 text-gray-500 font-semibold">Email</td>
+                                    <td className="px-2 py-2">john@exmaple.com</td>
+                                </tr>
+                                </tbody>
+                            </table>
 
-                               <div className="text-center">
-                                   <Button type="dashed">
-                                       <Link href={`/admin/users/${id}/edit`} className="flex items-center">
-                                           <Pencil className='w-4 h-4 mr-2 '/>
-                                           <span>Edit profile</span>
-                                       </Link>
-                                   </Button>
-                               </div>
-
-
+                            <div className="text-center">
+                                <Button type="dashed">
+                                    <Link href={`/admin/users/${id}/edit`} className="flex items-center">
+                                        <Pencil className='w-4 h-4 mr-2 '/>
+                                        <span>Edit profile</span>
+                                    </Link>
+                                </Button>
                             </div>
+
+
                         </div>
                     </div>
-
-
-
+                </div>
             </>
         )
     }
@@ -109,7 +125,7 @@ export default function UserIdPage() {
                 <PageHeader title="Users" desc="watch your user "/>
                 <Space>
                     <div className="flex justify-end">
-                        <Link aria-label="Create new row" href="/admin/news">
+                        <Link aria-label="Create new row" href="/admin/users">
                             <div
                                 className={clsx(
                                     buttonVariants({
@@ -127,27 +143,24 @@ export default function UserIdPage() {
                 </Space>
             </Space>
             <div className="my-6 content">
-
-                  <Collapse
-                      bordered={false}
-                      expandIcon={({ isActive }) => (
-                          <>
-                              {!isActive ? <ChevronRight /> : <ChevronDown />}
-                          </>
-                      )}
-                      items={[
-                          {
-                              key: '1',
-                              label: "User Information",
-                              children:<UserInfo />
-                          },
-                          {
-                              key: '2',
-                              label: "User platform",
-                              children:<PlatformUser />
-                          }
-                      ]}
-                  />
+                    <Card title="Infomation">
+                        <UserInfo />
+                    </Card>
+                <Collapse
+                    bordered={false}
+                    expandIcon={({isActive}) => (
+                        <>
+                            {!isActive ? <ChevronRight/> : <ChevronDown/>}
+                        </>
+                    )}
+                    items={[
+                        {
+                            key: '1',
+                            label: "User platform",
+                            children: <PlatformUser/>
+                        }
+                    ]}
+                />
 
             </div>
         </>

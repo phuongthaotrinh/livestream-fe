@@ -40,13 +40,9 @@ const items: MenuProps['items'] = [
 ];
 
 export const AdminMenu: React.FC = () => {
-    const onClick: MenuProps['onClick'] =   (e) => {
-        console.log('click ', e);
-    };
 
     return (
         <Menu
-            onClick={onClick}
             defaultSelectedKeys={['1']}
             defaultOpenKeys={['sub1']}
             mode="inline"
