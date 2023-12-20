@@ -5,14 +5,14 @@ import { Settings2  } from "lucide-react"
 import { type Table } from "@tanstack/react-table"
 
 import { toSentenceCase } from "@/lib/helpers"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/common/ui/button"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/common/ui/dropdown-menu"
 
 interface DataTableViewOptionsProps<TData> {
     table: Table<TData>

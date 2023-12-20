@@ -10,7 +10,7 @@ import Link from "next/link";
 import {MoveLeft} from "lucide-react";
 import {TextEditor} from "@/components/common/text-editor"
 import clsx from "clsx";
-import {buttonVariants} from "@/components/ui/button";
+import {buttonVariants} from "@/components/common/ui/button";
 
 
 export default function NewsCreatePage() {

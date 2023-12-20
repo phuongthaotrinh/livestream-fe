@@ -4,24 +4,23 @@ import {Icons} from "@/components/common/icons"
 import * as React from "react";
 import {useValidation} from "@/lib/hooks/use-validation";
 import {authSignupSchema, IAuthSignup} from "@/lib/validation/users";
-import {signupAction} from "@/app/_actions/users"
 import toast from "react-hot-toast"
 import {useRouter} from "next/navigation"
 import {catchError} from "@/lib/helpers"
-import { SignUp } from "@clerk/nextjs";
-
+import {useAuth} from "@/lib/hooks/use-auth";
 
 export default function Signup() {
     const [pending, startTransition] = React.useTransition();
     const router = useRouter()
+    const {signupAction} = useAuth();
 
-    //@ts-ignore
     const [form, rule] = useValidation<IAuthSignup>(authSignupSchema);
+
     const onFinish = async (values: IAuthSignup) => {
         startTransition(async () => {
             try {
                 await signupAction({...values})
-                toast.success("Register successfully.")
+                toast.success("Register successful.")
                 router.push("/signin")
             } catch (err) {
                 catchError(err)
@@ -34,7 +33,7 @@ export default function Signup() {
 
             <div className="grid grid-flow-col md:grid-cols-2 sm:grid-cols-1 mt-20">
                 <div className="img hidden md:block">
-                    <Icons.authBg/>
+                    <img src="https://res.cloudinary.com/dr9ebt5bg/image/upload/v1703064355/signup_lnkztv.jpg" alt=""/>
 
                 </div>
                 <div className="form">
@@ -72,7 +71,7 @@ export default function Signup() {
                                            required>
                                     <Input placeholder="John Doe"/>
                                 </Form.Item>
-                                <Form.Item name="name" label="Name" className="custom_ant_label" rules={[rule]}
+                                <Form.Item name="name" label="Display Name" className="custom_ant_label" rules={[rule]}
                                            required>
                                     <Input placeholder="John Doe"/>
                                 </Form.Item>
@@ -81,12 +80,26 @@ export default function Signup() {
                                     <Input placeholder="John Doe"/>
                                 </Form.Item>
                                 <Form.Item name="password" label="Password" className="custom_ant_label" rules={[rule]}
+                                           hasFeedback
                                            required>
                                     <Input.Password placeholder="*******"/>
                                 </Form.Item>
-                                <Form.Item name="verifyPassword" label="verifyPassword" className="custom_ant_label"
-                                           rules={[rule]}
-                                           required>
+                                <Form.Item name="verifyPassword" label="Confirm Password" className="custom_ant_label"
+                                           dependencies={['password']} hasFeedback
+                                           rules={[
+                                               {
+                                                   required: true,
+                                                   message: 'Please confirm your password!',
+                                               },
+                                               ({getFieldValue}) => ({
+                                                   validator(_, value) {
+                                                       if (!value || getFieldValue('password') === value) {
+                                                           return Promise.resolve();
+                                                       }
+                                                       return Promise.reject(new Error('The new password that you entered do not match!'));
+                                                   },
+                                               }),
+                                           ]}>
                                     <Input.Password placeholder="*******"/>
                                 </Form.Item>
                                 <Form.Item className=" mt-5">

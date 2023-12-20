@@ -19,8 +19,10 @@ export const usersSchema = z.object({
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/, {
             message:
                 "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character",
-        }),    roles: z.array(z.enum(Roles)).describe("Roles"),
-    email: z.string().email()
+        }), roles: z.array(z.enum(Roles)).describe("Roles"),
+    email: z.string().email(),
+    address: z.string(),
+    phoneNumber: z.string()
 });
 export const authSigninSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -43,20 +45,15 @@ export const authSignupSchema = z.object({
     email: z.string().email(),
     password: z
         .string()
-        .min(8, {
-            message: "Password must be at least 8 characters long",
-        })
-        .max(100)
+        .min(8, "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character",)
+        .max(20)
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/, {
             message:
                 "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character",
         }),
-    verifyPassword: z.string().min(8).describe("verifyPassword"),
-}).refine((data) => data.password === data.verifyPassword, {
-    message: "Passwords don't match",
-    path: ["verifyPassword"],
-});
 
+    verifyPassword: z.string().min(8),
+})
 
 export type IUsers = z.infer<typeof usersSchema>;
 export type IAuthSignin = z.infer<typeof authSigninSchema>;

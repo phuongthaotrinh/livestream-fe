@@ -6,7 +6,7 @@ import {MoreVertical } from "lucide-react"
 import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
 import {catchError, formatDate} from "@/lib/helpers";
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/common/ui/button"
 import {Checkbox} from "antd"
 import {
     DropdownMenu,
@@ -15,7 +15,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/common/ui/dropdown-menu"
 import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 

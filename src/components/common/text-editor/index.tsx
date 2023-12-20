@@ -2,6 +2,9 @@ import React from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+
+
+
 const modules = {
     toolbar: [
         [{ header: [1, 2, false] }],
@@ -12,9 +15,11 @@ const modules = {
             { indent: "-1" },
             { indent: "+1" },
         ],
-        ["link", "code"],
+        ['link', 'image'],
         ["clean"],
+
     ],
+
 };
 
 const formats = [

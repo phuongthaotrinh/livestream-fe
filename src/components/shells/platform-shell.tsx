@@ -6,7 +6,7 @@ import {MoreVertical } from "lucide-react"
 import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
 import {catchError, formatDate} from "@/lib/helpers";
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/common/ui/button"
 import {Checkbox} from "antd"
 import {
     DropdownMenu,
@@ -15,7 +15,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/common/ui/dropdown-menu"
 import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 
@@ -90,16 +90,6 @@ export  function PLatformTableShell({
                 },
             },
             {
-                accessorKey: "imdbId",
-                header: ({column}) => {
-                    return (
-                        <DataTableColumnHeader column={column} title="imdbId" />
-                    )
-                },
-                cell: ({row}) =>
-                    <div>{row.getValue("imdbId")}</div>,
-            },
-            {
                 accessorKey: "createdAt",
                 header: ({column}) => (
                     <DataTableColumnHeader column={column} title="Created At"/>
@@ -131,13 +121,10 @@ export  function PLatformTableShell({
                         <DropdownMenuContent align="end" className="w-[160px]">
                             <DropdownMenuItem >
                                 <Link
-                                    href={`/admin/movie-types/${row.original._id}`}
+                                    href={`/admin/movie-types/${row.original.id}`}
                                 >
                                     Edit
                                 </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem >
-                                <Link href={`/movies/${row.original._id}`}>Client view</Link>
                             </DropdownMenuItem>
 
                             <DropdownMenuSeparator/>
