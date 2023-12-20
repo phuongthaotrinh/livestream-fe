@@ -10,8 +10,8 @@ import { X, PlusCircle, TrashIcon } from "lucide-react"
 import type { Table } from "@tanstack/react-table"
 
 import clsx from "clsx";
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button, buttonVariants } from "@/components/common/ui/button"
+import { Input } from "@/components/common/ui/input"
 import { DataTableFacetedFilter } from "./faceted-filter"
 import { DataTableViewOptions } from "./view-options"
 

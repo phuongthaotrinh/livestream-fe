@@ -5,38 +5,34 @@ import * as React from "react";
 import {useValidation} from "@/lib/hooks/use-validation";
 import {authSigninSchema, IAuthSignin} from "@/lib/validation/users";
 import toast from "react-hot-toast"
-import {useRouter, redirect} from "next/navigation"
+import {useRouter} from "next/navigation"
 import {catchError} from "@/lib/helpers"
 import {useAuth} from "@/lib/hooks/use-auth";
-import {useContext} from "react";
-import AuthContext from "@/lib/context/AuthProvider";
 
 export default function Signin() {
     const [pending, startTransition] = React.useTransition();
     const router = useRouter()
     const [form, rule] = useValidation<IAuthSignin>(authSigninSchema);
 
+    const {signinAction} = useAuth();
 
-    const {signinAction} = useAuth()
     const onFinish = (values: IAuthSignin) => {
         startTransition(async () => {
             try {
                 await signinAction({...values});
-                toast.success('login sucess..');
+                toast.success('login successful..');
                 router.push('/')
             } catch (err) {
                 catchError(err)
             }
         })
     };
-
-
     return (
         <div>
 
             <div className="grid grid-flow-col md:grid-cols-2 sm:grid-cols-1 mt-20">
                 <div className="img hidden md:block">
-                    <Icons.authBg/>
+                    <img src="https://res.cloudinary.com/dr9ebt5bg/image/upload/v1703064075/5098293_jqrqbx.jpg" alt=""/>
                 </div>
                 <div className="form">
                     <div className="w-full  flex items-center justify-center">
@@ -73,8 +69,7 @@ export default function Signin() {
                                            required>
                                     <Input placeholder="johndoe@gmail.com"/>
                                 </Form.Item>
-                                <Form.Item name="password" label="Password" className="custom_ant_label" rules={[rule]}
-                                           required>
+                                <Form.Item name="password" label="Password" className="custom_ant_label" required>
                                     <Input.Password placeholder="*******"/>
                                 </Form.Item>
                                 <Form.Item className=" mt-5">

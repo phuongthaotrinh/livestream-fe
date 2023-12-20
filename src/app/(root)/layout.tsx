@@ -1,14 +1,20 @@
-import {HeroBanner} from "@/components/root/hero-banner"
 
+import {Header} from "@/layouts/root/header";
+import {Footer} from "@/layouts/root/footer";
 
-export default function RootPage({children}:{children:React.ReactNode}) {
+export default function RootPage({children}: { children: React.ReactNode }) {
+
     return (
         <div>
-            <div className="h-12 border border-red-200">
-                <HeroBanner />
+            <div className="w-full overflow-hidden">
+                <Header/>
             </div>
-            <div className="relative">
+            <div className="relative bg-white min-h-screen">
                 {children}
+            </div>
+
+            <div className='relative bg-white h-auto'>
+                <Footer/>
             </div>
         </div>
     )

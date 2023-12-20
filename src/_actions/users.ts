@@ -1,18 +1,24 @@
 import useAxiosPrivate from "@/lib/hooks/useAxiosPrivate"
-import {AxiosResponse} from 'axios';
-
+import axios, {AxiosResponse} from 'axios';
+import {http} from '@/config/http'
 const apiUrl = {
-    create: 'role-per/add-role',
+    //basic
+    create: 'user/register',
     getAll: 'user/get-all',
     getOne: 'user/user-by-id',
-    delete: 'user/user-delete'
+    delete: 'user/user-delete',
+
+    //group
+    createUserToGroup: 'user/add-new-child',
+    getAllMemberInGroup: 'user/get-all-member-in-group',
+    removeMember: 'user/remove-member'
 }
 
 
 const useApiUsers = () => {
     const axiosInstance = useAxiosPrivate();
 
-    const createRole = async (body: any) => {
+    const createUser = async (body: any) => {
         try {
             const response = await axiosInstance.post(apiUrl.create, body);
             return response.data;
@@ -32,7 +38,6 @@ const useApiUsers = () => {
         }
     };
     const getUser = async (payload: any) => {
-        console.log(payload)
         try {
             const response = await axiosInstance.get(`${apiUrl.getOne}/${payload}`);
             return response.data;
@@ -41,8 +46,6 @@ const useApiUsers = () => {
             throw error;
         }
     };
-
-
     const getUsers = async (): Promise<any> => {
         try {
             const controller = new AbortController();
@@ -50,7 +53,7 @@ const useApiUsers = () => {
             const timeoutId = setTimeout(() => {
                 controller.abort();
             }, 3000);
-            const response: AxiosResponse<any> = await axiosInstance.get(apiUrl.getAll, {signal});
+            const response: AxiosResponse<any> = await http.get(apiUrl.getAll, {signal});
             clearTimeout(timeoutId);
             return response.data;
         } catch (error) {
@@ -63,12 +66,46 @@ const useApiUsers = () => {
         }
     };
 
+    //group
+    const getAllMemberInGroup = async (payload: any) => {
+        console.log('getAllMemberInGroup_groupID', payload)
+        try {
+            const response = await axiosInstance.get(`${apiUrl.getAllMemberInGroup}/${payload}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
 
+    const createUserToGroup = async (body: any) => {
+        console.log('createUserToGroup_userId', body)
+        try {
+            const response = await axiosInstance.post(apiUrl.createUserToGroup, body);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+
+    const removeMemberToGroup = async (payload: any) => {
+        console.log("removeMemberToGroup_payload", payload)
+        try {
+            const response = await axiosInstance.delete(`${apiUrl.removeMember}/${payload.id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
     return {
-        createRole,
+        createUser,
         getUsers,
         deleteUser,
-        getUser
+        getUser,
+        getAllMemberInGroup,
+        createUserToGroup
     };
 };
 

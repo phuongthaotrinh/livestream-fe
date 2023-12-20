@@ -25,7 +25,7 @@ export function UploadFile({onChange, onRemove, value, max, hierarchy}: ImageUpl
     const valueLength = value;
     const firstImage = value?.at(0);
     const allImageWithoutFirst: string[] = value?.slice(1);
-    console.log("UploadFile", valueLength)
+
 
 
     return (

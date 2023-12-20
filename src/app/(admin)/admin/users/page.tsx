@@ -1,7 +1,7 @@
 'use client';
 import {PageHeader} from "@/components/common/page-header";
 import {UserTableShell} from "@/components/shells/user-shell"
-import useApiUsers from "@/app/_actions/users";
+import useApiUsers from "@/_actions/users";
 import * as React from "react";
 
 

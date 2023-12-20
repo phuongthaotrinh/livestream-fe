@@ -9,7 +9,7 @@ import {useValidation} from "@/lib/hooks/use-validation"
 import {usersSchema} from "@/lib/validation/users"
 import Link from "next/link";
 import clsx from "clsx";
-import {buttonVariants} from "@/components/ui/button";
+import {buttonVariants} from "@/components/common/ui/button";
 import {MoveLeft} from "lucide-react";
 import {platform} from "@/lib/constants/platform"
 

@@ -4,7 +4,6 @@ import './globals.css';
 import * as React from "react";
 import Providers from "@/components/providers"
 import Script from "next/script";
-import { ClerkProvider } from '@clerk/nextjs'
 
 const inter = Inter({subsets: ['latin']})
 
@@ -29,7 +28,6 @@ export default function RootLayout({
                 </React.Fragment>
             </div>
         </Providers>
-
         </body>
         </html>
     )

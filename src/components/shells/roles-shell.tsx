@@ -10,7 +10,7 @@ import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 import {Trash, Edit, PlusCircle} from "lucide-react"
 import clsx from "clsx";
-import {buttonVariants} from "@/components/ui/button";
+import {buttonVariants} from "@/components/common/ui/button";
 
 interface IPLatformTableShell {
     data: any[]
@@ -76,8 +76,7 @@ export  function RolesTableShell({
                     const id = row.original.id as string;
                     return (
                         <div className="lowercase truncate ">
-                            <Link href={`/admin/movie-types/${id}`}>
-
+                            <Link href={`/admin/roles/${id}`}>
                                 {row.getValue("name")}
                             </Link>
                         </div>

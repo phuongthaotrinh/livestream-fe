@@ -10,7 +10,7 @@ import {MoveLeft} from "lucide-react";
 import {UploadFile} from "@/components/common/upload-file";
 import {TextEditor} from "@/components/common/text-editor";
 import clsx from "clsx";
-import {buttonVariants} from "@/components/ui/button";
+import {buttonVariants} from "@/components/common/ui/button";
 
 const data = {
     "images": [

@@ -1,6 +1,5 @@
 'use client'
-import { Typography } from 'antd';
-
+import { Divider } from 'antd';
 interface IPageHeader{
     title:string,
     desc?:string
@@ -13,6 +12,7 @@ export function PageHeader ({title,desc}:IPageHeader) {
                 {title}
             </h1>
             <p className="text-sm text-muted-foreground p-0 m-0">{desc}.</p>
+            <Divider />
         </div>
     )
 }

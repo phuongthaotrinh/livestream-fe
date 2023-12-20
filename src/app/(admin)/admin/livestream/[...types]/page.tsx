@@ -3,71 +3,68 @@
 import {PageHeader} from "@/components/common/page-header";
 import {useValidation} from "@/lib/hooks/use-validation";
 import {IRoles, rolesSchema} from "@/lib/validation/roles";
-import {CollectionCreateForm} from "@/components/admin/platform/platformFields/form";
+import {CollectionCreateForm} from "@/components/admin/roles/form";
 import * as React from "react";
-import useApiPlatform from "@/app/_actions/platforms";
+import useApiPlatform from "@/_actions/platforms";
 import toast from "react-hot-toast";
 import {catchError} from "@/lib/helpers";
 import {useRouter} from "next/navigation";
-import {PlatformFiledsShell} from '@/components/shells/platformFileds-shell';
+import {RolesTableShell} from '@/components/shells/roles-shell';
 import {PlusCircle} from "lucide-react"
 import clsx from "clsx";
-import {buttonVariants} from "@/components/ui/button";
-import {IPlatformFields,platformsFieldsSchema} from "@/lib/validation/platform";
-import { v4 as uuid } from 'uuid';
+import {buttonVariants} from "@/components/common/ui/button";
 
 
-export default function PlatformFiedsPage () {
+export default function RolesPage() {
     const router = useRouter()
     const [pending, startTransition] = React.useTransition();
-    const [form, rule] = useValidation<IPlatformFields>(platformsFieldsSchema);
+    const [form, rule] = useValidation<IRoles>(rolesSchema);
     const [open, setOpen] = React.useState<boolean>(false);
     const [mode, setMode] = React.useState("");
-    const {getPlatformFileds, createPlatformFileds, platformFields} = useApiPlatform();
-    const [platformFileds, setPlatformFileds] = React.useState(platformFields);
+    const [data, setData] = React.useState<IRoles[]>([]);
+    const {createLiveStreamTypes,getAllLiveStreamTypes} = useApiPlatform();
 
+    React.useEffect(() => {
+        startTransition(() => {
+            toast.promise((getAllLiveStreamTypes()),
+                {
+                    loading: "Loading...",
+                    success: ({data}: any) => {
+                        setData(data);
+                        return "Get data successfully."
+                    },
+                    error: (err: unknown) => catchError(err),
+                }
+            )
 
-    // React.useEffect(() => {
-    //     startTransition(() => {
-    //         const fetchData = async () => {
-    //             try {
-    //                 const data  = await getPlatformFileds();
-    //                 setPlatformFileds(data);
-    //             } catch (error) {
-    //                 console.error('Error in fetching roles:', error);
-    //             }
-    //         };
-    //
-    //         fetchData();
-    //     });
-    // },[])
+        })
+    }, [])
 
-
+    console.log('mode', mode)
     const onCreate = (values: IRoles) => {
-        const id = uuid()
-        const payload = ({...values, id});
-
-        if(mode === 'create') {
+        if (mode === 'create') {
             startTransition(async () => {
                 try {
-                    const es = await createPlatformFileds(payload);
-                        toast.success('creating success');
+                    const es = await createLiveStreamTypes({...values});
+                    if (es.success == true) {
+                        toast.success(es.message);
                         form.resetFields();
                         onCancel();
-
+                    }
                 } catch (err) {
                     catchError(err);
                 }
             });
-        }else{
-
+        } else {
+            setOpen(true)
+            console.log('update mdode')
         }
     };
     const onCancel = () => {
         setOpen(false);
 
     }
-    const onEdit = (value:any) => {
+    const onEdit = (value: any) => {
         setOpen(true);
         setMode('update')
         form.setFieldsValue(value)
@@ -75,7 +72,7 @@ export default function PlatformFiedsPage () {
 
     return (
         <>
-            <PageHeader title="Platform fields" desc="settings all platform fields"/>
+            <PageHeader title="Roles" desc="settings all roles"/>
             <div className="my-6 relative">
                 <div className="absolute top-[0.3em] right-24 ">
                     <button
@@ -110,7 +107,7 @@ export default function PlatformFiedsPage () {
                 </div>
                 <div>
                     {!pending &&
-                        <PlatformFiledsShell data={platformFileds} pageCount={1} onEdit={onEdit} />
+                        <RolesTableShell data={data} pageCount={1} onEdit={onEdit}/>
                     }
                 </div>
             </div>

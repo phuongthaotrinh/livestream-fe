@@ -10,7 +10,7 @@ import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 import {Trash, Edit, PlusCircle} from "lucide-react"
 import clsx from "clsx";
-import {buttonVariants} from "@/components/ui/button";
+import {buttonVariants} from "@/components/common/ui/button";
 
 interface IPLatformFiledsTableShell {
     data: any[]

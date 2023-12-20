@@ -1,69 +1,72 @@
 'use client';
 
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import type {InferGetServerSidePropsType, GetServerSideProps} from 'next'
 import {PageHeader} from "@/components/common/page-header";
 import {useValidation} from "@/lib/hooks/use-validation";
 import {IRoles, rolesSchema} from "@/lib/validation/roles";
 import {CollectionCreateForm} from "@/components/admin/roles/form";
 import * as React from "react";
-import useApiRoles from "@/app/_actions/roles";
+import useApiRoles from "@/_actions/roles";
 import toast from "react-hot-toast";
 import {catchError} from "@/lib/helpers";
 import {useRouter} from "next/navigation";
 import {RolesTableShell} from '@/components/shells/roles-shell';
 import {PlusCircle} from "lucide-react"
 import clsx from "clsx";
-import {buttonVariants} from "@/components/ui/button";
+import {buttonVariants} from "@/components/common/ui/button";
 
 
-export default function RolesPage () {
+export default function RolesPage() {
     const router = useRouter()
     const [pending, startTransition] = React.useTransition();
     const [form, rule] = useValidation<IRoles>(rolesSchema);
     const [open, setOpen] = React.useState<boolean>(false);
     const [mode, setMode] = React.useState("");
-    const [roles, setRoles] = React.useState([]);
-    const {createRole,getRoles} = useApiRoles();
+    const [roles, setRoles] = React.useState<IRoles[]>([]);
+    const {createRole, getRoles} = useApiRoles();
 
     React.useEffect(() => {
         startTransition(() => {
-            const fetchData = async () => {
-                try {
-                    const { data } = await getRoles();
-                    setRoles(data);
-                } catch (error) {
-                    console.error('Error in fetching roles:', error);
+            toast.promise((getRoles()),
+                {
+                    loading: "Loading...",
+                    success: ({data}: any) => {
+                        setRoles(data);
+                        return "Get data successfully."
+                    },
+                    error: (err: unknown) => catchError(err),
                 }
-            };
+            )
 
-            fetchData();
-        });
-    },[])
+        })
 
 
+    }, [])
+
+console.log('mode', mode)
     const onCreate = (values: IRoles) => {
-       if(mode === 'create') {
-           startTransition(async () => {
-               try {
-                   const es = await createRole({...values});
-                   if (es.success == true) {
-                       toast.success(es.message);
-                       form.resetFields();
-                       onCancel();
-                   }
-               } catch (err) {
-                   catchError(err);
-               }
-           });
-       }else{
-
-       }
+        if (mode === 'create') {
+            startTransition(async () => {
+                try {
+                    const es = await createRole({...values});
+                    if (es.success == true) {
+                        toast.success(es.message);
+                        form.resetFields();
+                        onCancel();
+                    }
+                } catch (err) {
+                    catchError(err);
+                }
+            });
+        } else {
+            console.log('update mdode')
+        }
     };
     const onCancel = () => {
         setOpen(false);
 
     }
-    const onEdit = (value:any) => {
+    const onEdit = (value: any) => {
         setOpen(true);
         setMode('update')
         form.setFieldsValue(value)
@@ -106,7 +109,7 @@ export default function RolesPage () {
                 </div>
                 <div>
                     {!pending &&
-                        <RolesTableShell data={roles} pageCount={1} onEdit={onEdit} />
+                        <RolesTableShell data={roles} pageCount={1} onEdit={onEdit}/>
                     }
                 </div>
             </div>

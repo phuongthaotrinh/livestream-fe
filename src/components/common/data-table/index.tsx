@@ -28,7 +28,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/common/ui/table"
 import { DataTablePagination } from "./components/pagination"
 import { DataTableToolbar } from "./components/toolbar"
 import {LoadingSpin} from "@/components/common/loading-spin";

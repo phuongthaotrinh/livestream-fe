@@ -2,17 +2,17 @@ import useAxiosPrivate from "@/lib/hooks/useAxiosPrivate"
 import {AxiosResponse} from 'axios';
 
 const apiUrl = {
-    create: 'role-per/add-role',
-    getAll: 'role-per/get-all-role',
-    edit : ''
+    //basic
+    create: 'additional/add-bulk-slide',
+    getAll: 'additional/get-all-slide',
 
 }
 
 
-const useApiRoles = () => {
+const useApiSliders = () => {
     const axiosInstance = useAxiosPrivate();
 
-    const createRole = async (body: any) => {
+    const createSliders = async (body: any) => {
         try {
             const response = await axiosInstance.post(apiUrl.create, body);
             return response.data;
@@ -21,16 +21,26 @@ const useApiRoles = () => {
             throw error;
         }
     };
-    const updateRole = async (body: any) => {
-        try {
-            const response = await axiosInstance.patch(apiUrl.edit, body);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            throw error;
-        }
-    };
-    const getRoles = async (): Promise<any> => {
+    // const deleteUser = async (payload: any) => {
+    //     console.log(payload)
+    //     try {
+    //         const response = await axiosInstance.delete(`${apiUrl.delete}/${payload.id}`);
+    //         return response.data;
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //         throw error;
+    //     }
+    // };
+    // const getUser = async (payload: any) => {
+    //     try {
+    //         const response = await axiosInstance.get(`${apiUrl.getOne}/${payload}`);
+    //         return response.data;
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //         throw error;
+    //     }
+    // };
+    const getSliders = async (): Promise<any> => {
         try {
             const controller = new AbortController();
             const {signal} = controller;
@@ -52,9 +62,9 @@ const useApiRoles = () => {
 
 
     return {
-        createRole,
-        getRoles
+        createSliders,
+        getSliders
     };
 };
 
-export default useApiRoles;
+export default useApiSliders;

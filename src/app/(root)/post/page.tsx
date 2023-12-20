@@ -1,6 +1,8 @@
 'use client'
 import {Typography} from "antd";
 import {useRouter} from "next/navigation"
+import {fallbackImg} from "@/lib/constants/fallbackImg";
+
 const data = {
     "images": [
         "https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702190128/istockphoto-1400013305-1024x1024_nq31zp.jpg",
@@ -16,7 +18,7 @@ export default function PostPage() {
     return (
         <div className="container my-12">
             <div className="container text-center">
-                <h1 className="text-indigo-950 hover:text-indigo-600 font-bold text-6xl uppercase cursor-pointer">
+                <h1 className="text-indigo-950 hover:text-indigo-600 font-bold text-6xl  uppercase cursor-pointer">
                     Post Page
                 </h1>
             </div>
@@ -27,17 +29,23 @@ export default function PostPage() {
                              title={item.title}
                              onClick={() => router.push(`/post/${item.title}-${index}`)}
                         >
-                            <img className="w-full" src="https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702190128/istockphoto-1400013305-1024x1024_nq31zp.jpg" alt="Sunset in the mountains" />
+                            <img className="w-full max-h-[194px]"
+                                 src={'https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702982830/7744146_u8jb2g.jpg'}
+                                 alt="Sunset in the mountains"/>
                             <div className="p-4">
                                 <div className="font-bold text-xl mb-2">{item.title}-{index}</div>
                                 <p className="text-gray-700 text-base">
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla!
+                                    Maiores et perferendis eaque, exercitationem praesentium nihil.
                                 </p>
                             </div>
                             <div className="px-4 pt-4 pb-2">
-                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
-                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
-                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
+                                <span
+                                    className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
+                                <span
+                                    className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
+                                <span
+                                    className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
                             </div>
                         </div>
                     ))}
