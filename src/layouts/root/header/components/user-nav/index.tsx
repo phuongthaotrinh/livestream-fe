@@ -20,7 +20,7 @@ import {catchError} from "@/lib/helpers";
 import { useMounted } from "@/lib/hooks/use-mounted"
 
 
-export default function UserNav() {
+export default function Index() {
     const {profile, auth, setAuth} = useAuth();
     const router = useRouter()
     const [_, startTransition] = React.useTransition()
@@ -40,7 +40,7 @@ export default function UserNav() {
     };
 
     return (
-        <div className=" opacity-1 text-black cursor-pointer">
+        <div className=" opacity-1 text-black cursor-pointer sm:hidden md:block">
             {auth && mounted ? (
                 <>
                     <DropdownMenu>

@@ -8,9 +8,10 @@ import {catchError, formatDate} from "@/lib/helpers";
 import {Checkbox} from "antd"
 import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
-import {Trash, Edit, PlusCircle} from "lucide-react"
+import {Trash, Edit, PlusCircle,Wrench} from "lucide-react"
 import clsx from "clsx";
 import {buttonVariants} from "@/components/common/ui/button";
+import {useRouter} from "next/navigation";
 
 interface IPLatformTableShell {
     data: any[]
@@ -26,9 +27,7 @@ export  function RolesTableShell({
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
 
-    function deleteProductAction({id}: any) {
-
-    }
+    const router = useRouter()
 
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
@@ -107,7 +106,7 @@ export  function RolesTableShell({
 
                       <button
                           className="flex items-center gap-2"
-
+                            onClick={() => toast('Feature is not enable')}
                       >
                           <div
                               className={clsx(
@@ -119,7 +118,7 @@ export  function RolesTableShell({
                               )}
                           >
                               <Trash className="mr-2 h-4 w-4" aria-hidden="true"/>
-                              Xóa
+                              Delete
                           </div>
                       </button>
                       <button
@@ -140,6 +139,24 @@ export  function RolesTableShell({
                           </div>
                       </button>
 
+                      <button
+                          className="flex items-center gap-2"
+                          onClick={() => router.push(`/admin/roles/permission/${row.original.id}`)}
+                      >
+                          <div
+                              className={clsx(
+                                  buttonVariants({
+                                      variant: "outline",
+                                      size: "sm",
+                                      className: "h-8",
+                                  })
+                              )}
+                          >
+                              <Wrench className="mr-2 h-4 w-4" aria-hidden="true"/>
+                               Permission
+                          </div>
+                      </button>
+
                   </div>
 
 
@@ -150,26 +167,27 @@ export  function RolesTableShell({
     )
 
     function deleteSelectedRows() {
-        toast.promise(
-            Promise.all(
-                selectedRowIds.map((id) =>
-                    deleteProductAction({
-                        id,
-                    })
-                )
-            ),
-            {
-                loading: "Deleting...",
-                success: () => {
-                    setSelectedRowIds([])
-                    return "Products deleted successfully."
-                },
-                error: (err: unknown) => {
-                    setSelectedRowIds([])
-                    return catchError(err)
-                },
-            }
-        )
+        // toast.promise(
+        //     Promise.all(
+        //         selectedRowIds.map((id) =>
+        //             deleteProductAction({
+        //                 id,
+        //             })
+        //         )
+        //     ),
+        //     {
+        //         loading: "Deleting...",
+        //         success: () => {
+        //             setSelectedRowIds([])
+        //             return "Products deleted successfully."
+        //         },
+        //         error: (err: unknown) => {
+        //             setSelectedRowIds([])
+        //             return catchError(err)
+        //         },
+        //     }
+        // )
+        toast('Feature is not enable')
     }
 
 

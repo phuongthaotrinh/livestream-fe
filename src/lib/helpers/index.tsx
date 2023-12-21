@@ -41,7 +41,6 @@ export const useGetLastPath = () => {
     const pathname = usePathname();
     useIsomorphicLayoutEffect(() => {
         const paths = pathname.split('/');
-        console.log('oath', paths,paths[paths.length -1])
             setnewPath(paths[paths.length -1]);
 
     }, [pathname])

@@ -1,6 +1,6 @@
 'use client';
 
-import {Form, Button, InputNumber, Space, Checkbox} from "antd"
+import {Form, Button, Input, Space, Checkbox} from "antd"
 import {PageHeader} from "@/components/common/page-header";
 import * as React from "react";
 import {UploadFile} from "@/components/common/upload-file"
@@ -35,7 +35,7 @@ export default function SlidersCreatePage() {
             <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
                 <PageHeader title="Create" desc="create new news"/>
                 <div className="flex justify-end">
-                    <Link aria-label="Create new row" href="/admin/news">
+                    <Link aria-label="Create new row" href="/admin/sliders">
                         <div
                             className={clsx(
                                 buttonVariants({
@@ -99,7 +99,7 @@ export default function SlidersCreatePage() {
                         </div>
                     </div>
                     <Form.Item name="position" label="position" className="custom_ant_label" rules={[rule]} required>
-                        <InputNumber  min={0}/>
+                        <Input />
                     </Form.Item>
                     <Form.Item
                         label="Status"

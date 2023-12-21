@@ -51,3 +51,6 @@
     before:h-[2px] before:w-12 before:bg-[#16a1ff]
     visible delay-[0.2s]
 }
+.image-gallery-slide img {
+    @apply w-full h-full
+}
