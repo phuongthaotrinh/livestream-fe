@@ -5,8 +5,10 @@ import {Community} from "@/components/root/home/components/community";
 import {EnsureASafe} from "@/components/root/home/components/ensure-a-safe";
 import {Contact} from "@/components/root/home/components/contact";
 import {Subscridbe} from "@/components/root/home/components/subscribe";
-import {motion} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import {useInView} from 'react-intersection-observer';
+import Preloader from "@/components/root/pre-loader";
+import {useEffect, useState} from "react";
 
 export default function RootPageTemplate() {
 

@@ -15,7 +15,6 @@ export default function UserPage() {
             const fetchData = async () => {
                 try {
                     const {data} = await getUsers();
-                    console.log('data user', data)
                     setUsers(data);
                 } catch (error) {
                     console.error('Error in fetching roles:', error);

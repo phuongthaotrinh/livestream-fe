@@ -1,5 +1,5 @@
 'use client'
-import React, {useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import Particles, {initParticlesEngine} from "@tsparticles/react";
 import {
     type Container
@@ -10,15 +10,14 @@ import {Engine} from "@tsparticles/engine";
 import Text3d from "@/layouts/root/header/components/text3d";
 import clsx from "clsx";
 import Link from "next/link";
-import UserNav from "@/layouts/root/header/components/user-nav";
+import Index from "@/layouts/root/header/components/user-nav";
 import {Grid, Divider} from "antd";
 import {useGetLastPath} from "@/lib/helpers";
 import useIsomorphicLayoutEffect from "@/lib/hooks/use-isomorphic-layout-effect"
-import {Icons} from "@/components/common/icons";
 
 export const Header = () => {
     const [init, setInit] = useState(false);
-    const isHome= useGetLastPath();
+    const isHome = useGetLastPath();
 
     useIsomorphicLayoutEffect(() => {
         initParticlesEngine(async (engine: Engine) => {
@@ -47,43 +46,58 @@ export const Header = () => {
         }
     };
     const {xs, sm} = Grid.useBreakpoint();
-
+    const words = ['Make', 'Streaming', 'Easier', 'With', 'Us'];
     if (init) {
         return (
-
             <>
                 {isHome === "" ? (
                     <>
-                        <Particles
-                            id="tsparticles"
-                            particlesLoaded={particlesLoaded}
-                            options={memoizedOptions}
-                        />
+                       <div className="absolute top-0">
+                           <Particles
+                               id="tsparticles"
+                               particlesLoaded={particlesLoaded}
+                               options={memoizedOptions}
+                           />
+                       </div>
+                        <div
+                            className={'text-black grid md:grid-cols-2 sm:grid-cols-1 container h-screen max-h-screen'}>
 
-                        <div>
-                            <div className={'text-black grid md:grid-cols-2 sm:grid-cols-1 container'}>
-                                <div onMouseMove={(e) => manageMouseMove(e)} className={'container_page'}>
-                                    <div ref={plane} className={'body_page'}>
-                                        <Text3d primary={'Make'} secondary={'Make'}/>
-                                        <Text3d primary={'Streaming '} secondary={'Streaming'}/>
-                                        <Text3d primary={'Easier'} secondary={'Easier'}/>
-                                        <Text3d primary={'With'} secondary={'With'}/>
-                                        <Text3d primary={'Us'} secondary={'Us'}/>
-
-                                    </div>
-                                </div>
-                                <div className={clsx("mt-12", {
-                                    'hidden': xs
-                                })}>
-                                    <div className=" w-full p-2 flex justify-end ">
-                                        <div className="flex items-center gap-4">
-                                            <Link href="/">Home</Link>
-                                            <Link href="/post">News</Link>
-                                            <UserNav/>
-                                        </div>
-                                    </div>
+                            {/*text 3d*/}
+                            <div onMouseMove={(e) => manageMouseMove(e)}
+                                 className={'container_page'}
+                            >
+                                <div ref={plane} className={'body_page'}>
+                                    {words.map((item, index) => (
+                                        <Text3d key={index} primary={item} secondary={item}/>
+                                    ))}
                                 </div>
                             </div>
+
+                            {/*images  and menu*/}
+                            <div className={clsx("mt-12", {
+                                'hidden': xs,
+                                'block': !xs
+                            })}>
+                                <div className=" w-full p-2 flex justify-end ">
+                                    <div className="flex items-center gap-4">
+                                        <Link href="/">Home</Link>
+                                        <Link href="/post">News</Link>
+                                        <Index/>
+                                    </div>
+                                </div>
+                                <div className={"absolute top-30 "}>
+                                    <img
+                                        src="https://res.cloudinary.com/dr9ebt5bg/image/upload/v1703142379/13454203_5263607-removebg-preview_hk8mi0.png"
+                                        alt=""/>
+                                </div>
+                            </div>
+
+                            {/*<div className={clsx({*/}
+                            {/*    'block order-1': xs,*/}
+                            {/*    'hidden': !xs*/}
+                            {/*})}>*/}
+                            {/*    bugger menu*/}
+                            {/*</div>*/}
                         </div>
 
                     </>
@@ -102,7 +116,7 @@ export const Header = () => {
                                     <div className="flex items-center gap-4">
                                         <Link href="/">Home</Link>
                                         <Link href="/post">News</Link>
-                                        <UserNav/>
+                                        <Index/>
                                     </div>
                                 </div>
                             </div>

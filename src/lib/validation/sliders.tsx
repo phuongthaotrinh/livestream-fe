@@ -7,7 +7,7 @@ export const slidersSchema = z.object({
         invalid_type_error: "isActive must be a boolean",
     }).describe('status'),
     image_link:z.any().describe('images'),
-    position: z.number(),
+    position: z.string(),
     id: z.string()
 });
 

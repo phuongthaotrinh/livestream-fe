@@ -1,15 +1,34 @@
 'use client';
 import Link from "next/link"
-
+import * as React from "react";
+import {PageHeader} from "@/components/common/page-header";
+import {SliderShell} from "@/components/shells/slider-shell"
+import  useApiSliders from "@/_actions/sliders"
 export default function Sliders() {
+    const [pending, startTransition] = React.useTransition();
+    const [sliders, setSliders] = React.useState([]);
+    const {getSliders} = useApiSliders();
+
+    React.useEffect(() => {
+        startTransition(() => {
+            const fetchData = async () => {
+                try {
+                    const {data} = await getSliders();
+                  setSliders(data);
+                } catch (error) {
+                    console.error('Error in fetching roles:', error);
+                }
+            };
+            fetchData();
+        });
+    }, []);
     return (
         <>
-        <button>
-            <Link href="/admin/sliders/create" >
-                create
-            </Link>
-        </button>
-
+            <PageHeader title="Slider" desc="Mangerment slider here"/>
+            <div className="my-6">
+                {!pending && sliders && (
+                    <SliderShell data={sliders} pageCount={1} /> )}
+            </div>
         </>
     )
 }

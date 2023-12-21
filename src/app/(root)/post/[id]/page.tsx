@@ -4,8 +4,7 @@ import {useRouter} from "next/navigation";
 
 const data = {
     "images": [
-        "https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702190128/istockphoto-1400013305-1024x1024_nq31zp.jpg",
-        "https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702190137/houses-cheung-3rW1HAakg8g-unsplash_yqmmw7.jpg"
+        "https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702982830/7744146_u8jb2g.jpg"
     ],
     "title": "ssdsadasd",
     "content": "<p>sadasd</p><p><br></p><p><strong>dasdadasd</strong></p><p><br></p><ol><li><strong>123124</strong></li><li><strong>123123</strong></li></ol>",
@@ -53,7 +52,7 @@ export default function PostDetail() {
                                  onClick={() => router.push(`/post/${item.title}-${index}`)}
                             >
                                 <div className="flex">
-                                    <img className="w-28 h-auto"  src="https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702190128/istockphoto-1400013305-1024x1024_nq31zp.jpg" alt="Sunset in the mountains" />
+                                    <img className="w-28 h-auto"  src={dataD.images[0]} alt="Sunset in the mountains" />
                                     <div className="px-2">
                                         <div className="font-bold text-base mb-1">{item.title}-{index}</div>
                                         <span className="text-gray-700 text-xs">

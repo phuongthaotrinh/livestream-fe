@@ -13,6 +13,7 @@ import useApiUsers from "@/_actions/users";
 import {toast} from "react-hot-toast";
 import {catchError} from "@/lib/helpers";
 import {IUsers} from "@/lib/validation/users";
+import {ShellAction} from "@/components/common/shell-back";
 
 export default function UserIdPage() {
     const {id} = useParams();
@@ -147,24 +148,7 @@ export default function UserIdPage() {
         <>
             <Space className={"flex items-center justify-between"}>
                 <PageHeader title="Users" desc="watch your user "/>
-                <Space>
-                    <div className="flex justify-end">
-                        <Link aria-label="Create new row" href="/admin/users">
-                            <div
-                                className={clsx(
-                                    buttonVariants({
-                                        variant: "outline",
-                                        size: "sm",
-                                        className: "h-8",
-                                    })
-                                )}
-                            >
-                                <MoveLeft className="mr-2 h-4 w-4" aria-hidden="true"/>
-                                Back
-                            </div>
-                        </Link>
-                    </div>
-                </Space>
+                <ShellAction href="/admin/users" actionName="Back" />
             </Space>
             <div className="my-6 content">
                 <Card title="Infomation">
