@@ -2,12 +2,12 @@
 
 import * as React from "react"
 import Link from "next/link"
-import {MoreVertical } from "lucide-react"
+import {MoreVertical} from "lucide-react"
 import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
 import {catchError, formatDate} from "@/lib/helpers";
 import {Button} from "@/components/common/ui/button"
-import {Checkbox,Tag } from "antd"
+import {Tag} from "antd"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -20,20 +20,23 @@ import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 import {fallbackImg} from "@/lib/constants/fallbackImg";
 import useApiUsers from "@/_actions/users"
+import {useAuth} from "@/lib/hooks/use-auth";
+import {Checkbox} from "@/components/common/ui/checkbox"
+
 interface ProductsTableShellProps {
     data: any[]
     pageCount: number
 }
 
-export  function UserTableShell({
-                                                 data,
-                                                 pageCount,
-                                             }: ProductsTableShellProps) {
+export function UserTableShell({
+                                   data,
+                                   pageCount,
+                               }: ProductsTableShellProps) {
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
     const {deleteUser} = useApiUsers();
-
-
+    const {profile} = useAuth();
+    console.log('selectedRowIds',selectedRowIds)
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
         () => [
@@ -41,9 +44,12 @@ export  function UserTableShell({
                 id: "select",
                 header: ({table}) => (
                     <Checkbox
-                        checked={table.getIsAllPageRowsSelected()}
-                        onChange={(value: any) => {
-                            table.toggleAllPageRowsSelected(!!value)
+                        checked={
+                            table.getIsAllPageRowsSelected() ||
+                            (table.getIsSomePageRowsSelected() && "indeterminate")
+                        }
+                        onCheckedChange={(value) => {
+                            table.toggleAllPageRowsSelected(!!value);
                             setSelectedRowIds((prev) =>
                                 prev.length === data.length ? [] : data.map((row) => row.id)
                             )
@@ -55,7 +61,7 @@ export  function UserTableShell({
                 cell: ({row}) => (
                     <Checkbox
                         checked={row.getIsSelected()}
-                        onChange={(value) => {
+                        onCheckedChange={(value) => {
                             row.toggleSelected(!!value)
                             setSelectedRowIds((prev) =>
                                 value
@@ -83,7 +89,7 @@ export  function UserTableShell({
                             <Link href={`/admin/users/${id}`}>
 
                                 <img src={images ? images : fallbackImg}
-                                    className="w-12 h-12"
+                                     className="w-12 h-12"
 
                                 />
                             </Link>
@@ -112,7 +118,7 @@ export  function UserTableShell({
                 accessorKey: "fullName",
                 header: ({column}) => {
                     return (
-                        <DataTableColumnHeader column={column} title="fullName" />
+                        <DataTableColumnHeader column={column} title="fullName"/>
                     )
                 },
                 cell: ({row}) =>
@@ -122,7 +128,7 @@ export  function UserTableShell({
                 accessorKey: "email",
                 header: ({column}) => {
                     return (
-                        <DataTableColumnHeader column={column} title="email" />
+                        <DataTableColumnHeader column={column} title="email"/>
                     )
                 },
                 cell: ({row}) =>
@@ -132,7 +138,7 @@ export  function UserTableShell({
                 accessorKey: "block",
                 header: ({column}) => {
                     return (
-                        <DataTableColumnHeader column={column} title="status" />
+                        <DataTableColumnHeader column={column} title="status"/>
                     )
                 },
                 cell: ({row}) =>
@@ -172,7 +178,7 @@ export  function UserTableShell({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[160px]">
-                            <DropdownMenuItem >
+                            <DropdownMenuItem>
                                 <Link
                                     href={`/admin/users/${row.original.id}`}
                                 >
@@ -180,26 +186,31 @@ export  function UserTableShell({
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator/>
-                            <DropdownMenuItem
-                                onClick={() => {
-                                    startTransition(() => {
-                                        row.toggleSelected(false)
-                                        // @ts-ignore
-                                        toast.promise((deleteUser({id: row.original.id})),
-                                            {
-                                                loading: "Deleting...",
-                                                success: () => "Product deleted successfully.",
-                                                error: (err: unknown) => catchError(err),
-                                            }
-                                        )
+                            {(profile?.user?.id != row.original.id) && (
+                                <>
 
-                                    })
-                                }}
-                                disabled={isPending}
-                            >
-                                Delete
-                                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-                            </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            startTransition(() => {
+                                                row.toggleSelected(false)
+                                                // @ts-ignore
+                                                toast.promise((deleteUser({id: row.original.id})),
+                                                    {
+                                                        loading: "Deleting...",
+                                                        success: () => "Product deleted successfully.",
+                                                        error: (err: unknown) => catchError(err),
+                                                    }
+                                                )
+
+                                            })
+                                        }}
+                                        disabled={isPending}
+                                    >
+                                        Delete
+                                        <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                                    </DropdownMenuItem>
+                                </>
+                            )}
                         </DropdownMenuContent>
 
                     </DropdownMenu>
@@ -236,11 +247,11 @@ export  function UserTableShell({
 
     const userStatus = [
         {
-            label : 'avtive',
+            label: 'avtive',
             value: '0'
         },
         {
-            label : 'block',
+            label: 'block',
             value: '1'
         }
     ]

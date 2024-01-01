@@ -3,6 +3,7 @@ import {PageHeader} from "@/components/common/page-header";
 import * as React from "react";
 import {useAuth} from "@/lib/hooks/use-auth";
 
+
 export default function ProfileGroup() {
     const {profile} = useAuth();
     if (!profile) return null;

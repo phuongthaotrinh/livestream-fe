@@ -7,8 +7,8 @@ import {Contact} from "@/components/root/home/components/contact";
 import {Subscridbe} from "@/components/root/home/components/subscribe";
 import {AnimatePresence, motion} from 'framer-motion';
 import {useInView} from 'react-intersection-observer';
-import Preloader from "@/components/root/pre-loader";
-import {useEffect, useState} from "react";
+import {useAuth} from "@/lib/hooks/use-auth";
+
 
 export default function RootPageTemplate() {
 
@@ -30,7 +30,7 @@ export default function RootPageTemplate() {
             </section>
         );
     }
-
+    const {profile} = useAuth();
     return (
         <div className='bg-white'>
             <div className="pt-10 pb-10 ">

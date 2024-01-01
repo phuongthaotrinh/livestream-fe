@@ -1,11 +1,11 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {Form, Input, InputNumber, Popconfirm, Table, Typography, Button, Space, Checkbox} from 'antd';
+import {Form, Input, Modal, Table, Typography, Button, Space} from 'antd';
 import type {CheckboxValueType} from 'antd/es/checkbox/Group';
 import {PageHeader} from "@/components/common/page-header";
 import {IRoles} from "@/lib/validation/roles"
-import {Edit, Trash} from "lucide-react"
+import {Edit, PlusCircle, Trash} from "lucide-react"
 import useApiRoles from "@/_actions/roles"
 import {toast} from "react-hot-toast";
 import {catchError} from "@/lib/helpers";
@@ -20,7 +20,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean;
     dataIndex: string;
     title: any;
-    inputType: 'number' | 'text';
+    inputType:  'text';
     record: Item;
     index: number;
     children: React.ReactNode;
@@ -36,7 +36,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
                                                        children,
                                                        ...restProps
                                                    }) => {
-    const inputNode = inputType === 'number' ? <InputNumber/> : <Input/>;
+
 
     return (
         <td {...restProps}>
@@ -51,7 +51,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
                         },
                     ]}
                 >
-                    {inputNode}
+                    <Input/>
                 </Form.Item>
             ) : (
                 children
@@ -60,23 +60,33 @@ const EditableCell: React.FC<EditableCellProps> = ({
     );
 };
 
-export const PermissionTemplate: React.FC = () => {
-    const {createPermisstion, getAllPermisstion, getRoles} = useApiRoles();
 
+export const PermissionTemplate: React.FC = () => {
+    const {
+        createPermisstion,
+        getAllPermisstion,
+        getRoles,
+        assignRoleForPermission,
+        getPermissionOfRole
+    } = useApiRoles();
+    const [newPermissions, setNewPermissions] = React.useState<any[]>([]);
 
     const [form] = Form.useForm();
-    const [isPending, startTransition] = React.useTransition()
     const [data, setData] = useState<Item[]>([]);
     const [count, setCount] = useState<number>(0)
     const [editingKey, setEditingKey] = useState('');
     const id = React.useId();
     const [keyRadio, setKeyRadio] = useState<any>([]);
+
     //roles after convert to CheckBoxValue
     const [roles, setRoles] = useState([]);
+
     //raw roles
     const [rawRoles, setRawRoles] = useState([]);
 
-    const [rolesAssign, setRoleAssign] = useState<any>()
+    const [rolesAssign, setRoleAssign] = useState<any>();
+    const [openModal, setOpenModal] = React.useState<boolean>(false)
+    const [checkedvalue, setCheckedValue] = React.useState<any[]>([])
 
     useEffect(() => {
         (async () => {
@@ -110,6 +120,31 @@ export const PermissionTemplate: React.FC = () => {
             setRoleAssign(keyRadio)
         }
     }, [keyRadio])
+
+    // useEffect(() => {
+    //
+    //     if (data && rawRoles) {
+    //         toast.promise(
+    //             Promise.all(
+    //                 rawRoles.map((item: IRoles) =>
+    //                     getPermissionOfRole({
+    //                         id: item?.id,
+    //                     })
+    //                 )
+    //             ),
+    //             {
+    //                 loading: "Loading...",
+    //                 success: (data: any) => {
+    //                     return "Loading successfully."
+    //                 },
+    //                 error: (err: unknown) => {
+    //                     return catchError(err)
+    //                 },
+    //             }
+    //         );
+    //     }
+    // }, [data]);
+
 
     const isEditing = (record: Item) => record.key === editingKey;
 
@@ -160,38 +195,22 @@ export const PermissionTemplate: React.FC = () => {
     };
 
     const deleteRecord = (key: React.Key) => {
-        const newData = data.filter((item) => item.key !== key);
-        setData(newData);
+        // const newData = data.filter((item) => item.key !== key);
+        // setData(newData);
+        toast.error('feature not enable')
     }
 
     const onChangeAssign = (checkedValues: CheckboxValueType[]) => {
-         const checked = rawRoles.filter((item: any) => checkedValues.includes(item.id));
+        const checked = rawRoles.filter((item: any) => checkedValues.includes(item.id));
         setKeyRadio(checked);
 
     }
-
     const columns = [
         {
             title: 'name',
             dataIndex: 'name',
             width: '25%',
             editable: true,
-        },
-        {
-            title: 'assign',
-            dataIndex: 'assign',
-            render: (_: any, record: Item) => {
-                const editable = isEditing(record);
-                return (
-                    <Space size="large">
-                        <Checkbox.Group
-                            options={roles}
-                            onChange={onChangeAssign}
-                            disabled={!editable}
-                        />
-                    </Space>
-                )
-            },
         },
         {
             title: 'operation',
@@ -228,75 +247,88 @@ export const PermissionTemplate: React.FC = () => {
         if (!col.editable) {
             return col;
         }
+
+        // console.log('mergedColumns', col, columns)
         return {
             ...col,
-            onCell: (record: Item) => ({
-                record,
-                inputType: col.dataIndex === 'age' ? 'number' : 'text',
-                dataIndex: col.dataIndex,
-                title: col.title,
-                editing: isEditing(record),
-            }),
+            onCell: (record: Item) => {
+                return ({
+                    record,
+                    dataIndex: col.dataIndex,
+                    title: col.title,
+                    editing: isEditing(record),
+                })
+            },
+
         };
     });
 
-    // console.log('setData', data)
-    const handleAdd = () => {
-        const newData: Item = {
-            key: `${id.concat(String(data.length))}`,
-            name: `Edward King-${data.length}`,
-            assign: []
-        }
 
-        setData([...data, newData]);
+    const handleAdd = (values: any) => {
+        toast.promise((createPermisstion({name: values.name})),
+            {
+                loading: "Creating permissions...",
+                success: (payload: any) => {
+                    const newData = payload?.data as any;
+                    const dataNew = {
+                        ...newData,
+                        key: `${newData.name}.${count}.${id}`,
+                        assign: []
+                    }
+
+                    setData([...data, dataNew])
+                    setOpenModal(false);
+                    form.resetFields();
+                    return 'Creating permissions success'
+                },
+                error: (err: unknown) => catchError(err),
+            }
+        )
     }
 
     const saveTable = () => {
-        const payload:any[] = [];
-        data.forEach((item:any) => {
-            item.assign.forEach((assignItem:any) => {
-                const existingRole = payload.find(role => role.roles.id === assignItem.id);
-
-                if (existingRole) {
-                    existingRole.permissions.push({
-                        id: item.id,
-                        name: item.name,
-                        createdAt: item.createdAt,
-                        updatedAt: item.updatedAt
-                    });
-                } else {
-                    payload.push({
-                        roles: {
-                            id: assignItem.id,
-                            name: assignItem.name,
-                            createdAt: assignItem.createdAt,
-                            updatedAt: assignItem.updatedAt
-                        },
-                        permissions: [
-                            {
-                                id: item.id,
-                                name: item.name,
-                                createdAt: item.createdAt,
-                                updatedAt: item.updatedAt
-                            }
-                        ]
-                    });
-                }
-            });
-        });
-
-        startTransition(() => {
-            toast.promise((createPermisstion(payload)),
-                {
-                    loading: "Loading...",
-                    success: (data: any) => {
-                        console.log('data_after_post', data)
-                        return "Create permissions successfully."
-                    },
-                    error: (err: unknown) => catchError(err),
-                }
-            )
-        })
+        const payload: any[] = [];
+        console.log('save table',data)
+        // data.forEach((item: any) => {
+        //     item.assign.forEach((assignItem: any) => {
+        //         const existingRole = payload.find(role => role.roles.id === assignItem.id);
+        //
+        //         if (existingRole) {
+        //             existingRole.permissions.push({
+        //                 id: item.id,
+        //                 name: item.name,
+        //                 createdAt: item.createdAt,
+        //                 updatedAt: item.updatedAt
+        //             });
+        //         } else {
+        //             payload.push({
+        //                 roles: {
+        //                     id: assignItem.id,
+        //                     name: assignItem.name,
+        //                     createdAt: assignItem.createdAt,
+        //                     updatedAt: assignItem.updatedAt
+        //                 },
+        //                 permissions: [
+        //                     {
+        //                         id: item.id,
+        //                         name: item.name,
+        //                         createdAt: item.createdAt,
+        //                         updatedAt: item.updatedAt
+        //                     }
+        //                 ]
+        //             });
+        //         }
+        //     });
+        // });
+        // toast.promise((assignRoleForPermission(payload)),
+        //     {
+        //         loading: "Assigning...",
+        //         success: (payload: any) => {
+        //             return 'Assigning permissions success'
+        //         },
+        //         error: (err: unknown) => catchError(err),
+        //     }
+        // )
 
     }
     return (
@@ -306,16 +338,36 @@ export const PermissionTemplate: React.FC = () => {
                 <ShellAction href="/admin/roles" actionName="Back To Role"/>
             </Space>
             <Space>
-                <Button onClick={handleAdd} type="dashed">
-                    Add a row
+                <Button onClick={() => setOpenModal(true)} type="dashed" className="flex items-center">
+                    <PlusCircle className="w-4 h-4 mr-2"/>
+                    New Permission
                 </Button>
-                <Button onClick={saveTable} type="primary" style={{backgroundColor: '#000'}}>
-                    Save Table
-                </Button>
+                {/*<Button onClick={saveTable} type="primary" style={{backgroundColor: '#000'}}>*/}
+                {/*    Save Table*/}
+                {/*</Button>*/}
+                <Modal open={openModal} title="Create Permission Name" onOk={() => {
+                    form
+                        .validateFields()
+                        .then((values) => {
+                            form.resetFields();
+                            handleAdd(values);
+                        })
+                        .catch((info) => {
+                            console.log('Validate Failed:', info);
+                        });
+                }}
+                       onCancel={() => setOpenModal(false)}
+                       okText={<p className="text-black">OK</p>}
+                >
+                    <Form form={form} layout="vertical">
+                        <Form.Item name="name" label="Permission name">
+                            <Input placeholder="Permission name..."/>
+                        </Form.Item>
+                    </Form>
+                </Modal>
             </Space>
             <div className="my-6">
                 <Form form={form} component={false}>
-
                     <Table
                         components={{
                             body: {
@@ -329,6 +381,7 @@ export const PermissionTemplate: React.FC = () => {
                         pagination={{
                             onChange: cancel,
                         }}
+                        size="small"
                     />
                 </Form>
             </div>

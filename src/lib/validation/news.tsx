@@ -8,7 +8,7 @@ export const newsSchema = z.object({
         required_error: "status is required",
         invalid_type_error: "isActive must be a boolean",
     }).describe('status'),
-    images:z.any().describe('images'),
+    image_link:z.any().describe('images'),
     content: z.any().describe("content"),
     id: z.number().describe('id'),
     preview: z.string().describe("preview"),

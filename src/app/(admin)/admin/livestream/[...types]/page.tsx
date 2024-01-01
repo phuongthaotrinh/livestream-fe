@@ -31,7 +31,7 @@ export default function RolesPage() {
                     loading: "Loading...",
                     success: ({data}: any) => {
                         setData(data);
-                        return "Get data successfully."
+                        return "getAllLiveStreamTypes successfully."
                     },
                     error: (err: unknown) => catchError(err),
                 }

@@ -17,12 +17,14 @@ import {
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>
-    pageSizeOptions?: number[]
+    pageSizeOptions?: number[],
+    showRowPerPage?:boolean
 }
 
 export function DataTablePagination<TData>({
                                                table,
                                                pageSizeOptions = [10, 20, 30, 40, 50],
+                                               showRowPerPage=true
                                            }: DataTablePaginationProps<TData>) {
     return (
         <div
@@ -32,7 +34,9 @@ export function DataTablePagination<TData>({
                 {table.getFilteredRowModel().rows.length} row(s) selected.
             </div>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
-                <div className="flex items-center space-x-2">
+
+                {showRowPerPage && (
+                    <div className="flex items-center space-x-2">
                     <p className="whitespace-nowrap text-sm font-medium">Rows per page</p>
                     <Select
                         value={`${table.getState().pagination.pageSize}`}
@@ -52,6 +56,7 @@ export function DataTablePagination<TData>({
                         </SelectContent>
                     </Select>
                 </div>
+                )}
                 <div className="flex w-[100px] items-center justify-center text-sm font-medium">
                     Page {table.getState().pagination.pageIndex + 1} of{" "}
                     {table.getPageCount()}

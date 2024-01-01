@@ -1,7 +1,6 @@
 
 import {Header} from "@/layouts/root/header";
 import {Footer} from "@/layouts/root/footer";
-
 export default function RootPage({children}: { children: React.ReactNode }) {
 
     return (

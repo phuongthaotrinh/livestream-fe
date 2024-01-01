@@ -18,7 +18,7 @@ export function Sliders({data}: ISlidersProps) {
             <ImageGallery items={data?.map((item) => {
                 return {
                     original: item?.image_link,
-                    originalClass: "h-[300px]",
+                    originalClass: "h-[300px] w-full",
                     originalTitle:'news-images',
                     loading:'lazy',
                 }

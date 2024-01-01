@@ -8,7 +8,6 @@ import * as React from "react";
 import useApiRoles from "@/_actions/roles";
 import toast from "react-hot-toast";
 import {catchError} from "@/lib/helpers";
-import {useRouter, usePathname} from "next/navigation";
 import {RolesTableShell} from '@/components/shells/roles-shell';
 import {PlusCircle} from "lucide-react"
 import clsx from "clsx";

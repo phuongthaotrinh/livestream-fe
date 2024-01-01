@@ -17,73 +17,71 @@ import {
 import * as React from "react";
 import {useRouter} from "next/navigation";
 import {catchError} from "@/lib/helpers";
-import { useMounted } from "@/lib/hooks/use-mounted"
 
 
 export default function Index() {
-    const {profile, auth, setAuth} = useAuth();
+    const {profile, setAuth,auth, isAdmin} = useAuth();
     const router = useRouter()
-    const [_, startTransition] = React.useTransition()
-    const mounted = useMounted();
+    const [isPending, startTransition] = React.useTransition();
 
     const handleLogout = () => {
-        startTransition(async () => {
+        startTransition( () => {
             try {
-                await setAuth(null);
+                setAuth(null)
                 toast.success('logout successful..');
                 router.push(`${window.location.origin}`)
             } catch (err) {
                 catchError(err)
             }
-
-        })
+        });
     };
 
     return (
         <div className=" opacity-1 text-black cursor-pointer sm:hidden md:block">
-            {auth && mounted ? (
+            {auth ? (
                 <>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Avatar
-                                size="large"
-                                src={profile?.images ? profile?.images : fallbackImg}
-                                srcSet={fallbackImg}
-                            />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="end" forceMount>
-                            <DropdownMenuLabel className="font-normal">
-                                <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">{profile?.name}</p>
-                                    <p className="text-xs leading-none text-muted-foreground">
-                                        {profile?.email}
-                                    </p>
-                                </div>
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile/account')}>
-                                    Profile
-                                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Avatar
+                                    size="large"
+                                    src={profile?.user?.images ? profile?.user?.images : fallbackImg}
+                                    srcSet={profile?.user?.images ? profile?.user?.images : fallbackImg}
+                                />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56" align="end" forceMount>
+                                <DropdownMenuLabel className="font-normal">
+                                    <div className="flex flex-col space-y-1">
+                                        <p className="text-sm font-medium leading-none">{profile?.user?.name}</p>
+                                        <p className="text-xs leading-none text-muted-foreground">
+                                            {profile?.user?.email}
+                                        </p>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile/account')}>
+                                        Profile
+                                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile/platforms')}>
+                                        Your Platforms
+                                        <DropdownMenuShortcut>⇧⌘B</DropdownMenuShortcut>
+                                    </DropdownMenuItem>
+                                    {isAdmin && <DropdownMenuItem className="cursor-pointer"
+                                                                  onClick={() => router.push('/admin')}>
+                                        Dashboard
+                                        <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+                                    </DropdownMenuItem>}
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuItem>
+                                    <div onClick={handleLogout} className="cursor-pointer">
+                                        Log out
+                                    </div>
+                                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile/platforms')}>
-                                    Your Platforms
-                                    <DropdownMenuShortcut>⇧⌘B</DropdownMenuShortcut>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/admin')}>
-                                    Dashboard
-                                    <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuItem>
-                                <div onClick={handleLogout} className="cursor-pointer">
-                                    Log out
-                                </div>
-                                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
                 </>
             ) : (

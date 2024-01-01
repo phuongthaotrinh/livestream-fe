@@ -12,15 +12,14 @@ export default function UserPage() {
 
     React.useEffect(() => {
         startTransition(() => {
-            const fetchData = async () => {
+            (async () => {
                 try {
                     const {data} = await getUsers();
                     setUsers(data);
                 } catch (error) {
                     console.error('Error in fetching roles:', error);
                 }
-            };
-            fetchData();
+            })()
         });
     }, []);
 

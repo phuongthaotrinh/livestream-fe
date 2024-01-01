@@ -3,11 +3,8 @@ const nextConfig = {
     images: {
         domains: ["res.cloudinary.com", "tentulogo.com", 'wpdemo.vegatheme.com', "merakiui.com"],
     },
-    reactStrictMode: true,
+    reactStrictMode: false,
     swcMinify: true,
-    experimental: {
-        appDir: true,
-    },
 }
 
 module.exports = nextConfig

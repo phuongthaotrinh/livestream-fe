@@ -7,12 +7,11 @@ import {useId} from "react"
 const apiUrl = {
     //platform
     getAll: 'platform/get-all',
-    create: 'platform/create',
+    create: 'platform/add-live-stream-platform',
 
 
-    //live_stream_type
-    createLiveStreamTypes: 'platform/add-live-stream-type',
-    getAllLiveStreamTypes: 'platform/get-all-live-stream-type'
+    // //live_stream_type
+     createLiveStreamTypes: 'platform/add-live-stream-type',
 }
 
 
@@ -54,23 +53,9 @@ const useApiPlatform = () => {
 
 //live_stream_type
     const getAllLiveStreamTypes = async (): Promise<any> => {
-        try {
-            const controller = new AbortController();
-            const {signal} = controller;
-            const timeoutId = setTimeout(() => {
-                controller.abort();
-            }, 3000);
-            const response: AxiosResponse<any> = await axiosInstance.get(apiUrl.getAllLiveStreamTypes, {signal});
-            clearTimeout(timeoutId);
-            return response.data;
-        } catch (error) {
-            if (error instanceof DOMException && error.name === 'AbortError') {
-                console.log('Request aborted');
-            } else {
-                console.error('Error fetching data:', error);
-                throw error;
-            }
-        }
+        const {data:all} = await getAll();
+        const data = all.liveStreamTypeData as any[];
+        return data
     };
 
     const createLiveStreamTypes = async (body: any) => {

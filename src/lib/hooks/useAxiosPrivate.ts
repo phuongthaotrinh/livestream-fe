@@ -12,34 +12,37 @@ const useAxiosPrivate = () => {
     useEffect(() => {
         // Check if we are on the client-side before using useEffect
         if (typeof window !== 'undefined') {
-            const requestIntercept = httpAuth.interceptors.request.use(
-                config => {
-                    if (!config.headers['Authorization']) {
-                        config.headers['Authorization'] = `Bearer ${auth?.token}`;
-                    }
-                    return config;
-                }, (error) => Promise.reject(error)
-            );
+            if(auth) {
+                const token = auth.token
+                const requestIntercept = httpAuth.interceptors.request.use(
+                    config => {
+                        if (!config.headers['Authorization']) {
+                            config.headers['Authorization'] = `Bearer ${token}`;
+                        }
+                        return config;
+                    }, (error) => Promise.reject(error)
+                );
 
-            const responseIntercept = httpAuth.interceptors.response.use(
-                (response: AxiosResponse) => response,
-                async (error) => {
-                    const prevRequest = error?.config;
-                    if (error?.response?.status === 403 && !prevRequest?.sent) {
-                        prevRequest.sent = true;
-                        const newAccessToken = await refresh();
-                        prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                        return httpAuth(prevRequest);
+                const responseIntercept = httpAuth.interceptors.response.use(
+                    (response: AxiosResponse) => response,
+                    async (error) => {
+                        const prevRequest = error?.config;
+                        if (error?.response?.status === 403 && !prevRequest?.sent) {
+                            prevRequest.sent = true;
+                            const newAccessToken = await refresh();
+                            prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                            return httpAuth(prevRequest);
+                        }
+                        return Promise.reject(error);
                     }
-                    return Promise.reject(error);
-                }
-            );
+                );
+
 
             return () => {
                 httpAuth.interceptors.request.eject(requestIntercept);
                 httpAuth.interceptors.response.eject(responseIntercept);
             };
-        }
+        } }
     }, [auth, refresh]);
 
     return httpAuth;
