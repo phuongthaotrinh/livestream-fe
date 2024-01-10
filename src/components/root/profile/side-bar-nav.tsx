@@ -6,6 +6,7 @@ import clsx from "clsx";
 import {usePathname, useSelectedLayoutSegment} from "next/navigation"
 import {Icons} from "@/components/common/icons";
 import {ChevronLeftIcon} from "lucide-react"
+import {useId} from "react";
 
 type INavbarProps = {
     items :MainNavItem[],
@@ -18,7 +19,7 @@ type INavbarProps = {
 export function SidebarNav({className, items,type, ...props}: INavbarProps & React.HTMLAttributes<HTMLDivElement>) {
     const segment = useSelectedLayoutSegment();
     const pathName = usePathname();
-    if (!items?.length) return null
+    if (!items?.length) return null;
     return (
 
         <>
@@ -26,7 +27,7 @@ export function SidebarNav({className, items,type, ...props}: INavbarProps & Rea
                 <div className={clsx("flex w-full flex-col gap-2", className)} {...props}>
                     {items.map((item, index) => {
                         const Icon = item.icon ? Icons[item.icon] : ChevronLeftIcon
-                        const isTrue = item && item?.href?.includes(String(segment))
+                        const isTrue = item && item?.href?.includes(String(segment));
                         return item.href ? (
                             <Link
                                 aria-label={item.title}

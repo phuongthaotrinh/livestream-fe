@@ -1,5 +1,5 @@
-'use client'
-import {Button, Form, Input} from 'antd';
+'use client';
+
 import {Icons} from "@/components/common/icons"
 import * as React from "react";
 import {useValidation} from "@/lib/hooks/use-validation";
@@ -10,6 +10,7 @@ import {catchError} from "@/lib/helpers"
 import {useAuth} from "@/lib/hooks/use-auth";
 import {SocicalAuth} from "@/components/root/auth/componnents/socicalAuth";
 import {SignUpForm} from "@/components/form/sign-up-form";
+import Image from "next/image";
 
 export default function Signup() {
     const [isPending, startTransition] = React.useTransition();
@@ -35,7 +36,8 @@ export default function Signup() {
 
             <div className="grid grid-flow-col md:grid-cols-2 sm:grid-cols-1 mt-20">
                 <div className="img hidden md:block">
-                    <img src="https://res.cloudinary.com/dr9ebt5bg/image/upload/v1703064355/signup_lnkztv.jpg" alt=""/>
+                    <Image src="/images/sign-up.jpg" alt="signup_banner"   width={600}
+                           height={600} />
 
                 </div>
                 <div className="form">

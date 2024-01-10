@@ -1,7 +1,7 @@
 
 
 type IconProps = React.HTMLAttributes<SVGElement>
-import {CircleUserRound, BellDot, LayoutGrid, UserRoundIcon, Newspaper} from "lucide-react"
+import {CircleUserRound, BellDot, LayoutGrid, UserRoundIcon, Newspaper, Users, ScrollText} from "lucide-react"
 export const Icons = {
     google: (props: IconProps) => (
         <svg role="img" viewBox="0 0 24 24" {...props}>
@@ -107,6 +107,8 @@ export const Icons = {
     notifications:BellDot,
     layout_grid: LayoutGrid,
     user_round:UserRoundIcon,
-    new_paper:Newspaper
+    new_paper:Newspaper,
+    users:Users,
+    scroll_text:ScrollText
 
 }

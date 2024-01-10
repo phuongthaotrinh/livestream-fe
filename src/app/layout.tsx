@@ -3,7 +3,7 @@ import './globals.css';
 import * as React from "react";
 import Providers from "@/components/providers"
 import {AuthProvider} from "@/lib/context/AuthProvider"
-
+import {PlatformProviders} from "@/lib/context/PlatformProvider"
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -22,7 +22,9 @@ export default function RootLayout({
         <Providers>
             <div className="min-h-screen">
                 <AuthProvider>
-                    {children}
+                    <PlatformProviders>
+                       {children}
+                    </PlatformProviders>
                 </AuthProvider>
             </div>
 

@@ -36,7 +36,7 @@ export function UserTableShell({
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
     const {deleteUser} = useApiUsers();
     const {profile} = useAuth();
-    console.log('selectedRowIds',selectedRowIds)
+
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
         () => [
@@ -172,7 +172,6 @@ export function UserTableShell({
                             <Button
                                 aria-label="Open menu"
                                 variant="ghost"
-                                // className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                             >
                                 <MoreVertical className="h-4 w-4 text-black" aria-hidden="true"/>
                             </Button>
@@ -212,10 +211,7 @@ export function UserTableShell({
                                 </>
                             )}
                         </DropdownMenuContent>
-
                     </DropdownMenu>
-
-
                 ),
             },
         ],

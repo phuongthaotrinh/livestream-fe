@@ -5,18 +5,24 @@ import {inputTypeAttb} from "@/lib/constants/inputTypeAttb";
 import {MinusCircle, PlusCircle} from "lucide-react";
 import * as React from "react";
 import {Rule} from "rc-field-form/es/interface";
+import useApiPlatform from "@/_actions/platforms";
+import {usePlatform} from "@/lib/hooks/use-platform";
 
 type IPlatformForm = {
-    onFinish: (values:any) => void,
-    form:FormInstance<any>,
-    handleReset:() => void,
-    images:any[],
-    setImages: React.Dispatch<React.SetStateAction<any[]>>,
-    rule:Rule
+    onFinish: (values: any) => void,
+    form: FormInstance<any>,
+    handleReset: () => void,
+    rule: Rule
 
 }
 
-export function PlatformForm({onFinish, form,handleReset, images, setImages,rule}:IPlatformForm) {
+export function PlatformForm({onFinish, form, handleReset,rule}: IPlatformForm) {
+    const {platforms, liveStreamTypeData, setTrigger} = usePlatform()
+
+
+
+
+
     return (
         <>
             <Form name="form1" layout="vertical"
@@ -35,67 +41,19 @@ export function PlatformForm({onFinish, form,handleReset, images, setImages,rule
 
 
                 <Card title="infomation" className="my-6">
-                    <div className="mb-3">
-                        <Form.Item
-                            name="images"
-                            label="Images"
-                            className="custom_ant_label"
-                            // rules={[
-                            //     {
-                            //         required: true,
-                            //         message: 'Please input your password!',
-                            //     },
-                            // ]}
-                            // required
-                        >
-                            <UploadFile
-                                max={2}
-                                hierarchy={false}
-                                onRemove={(data: any) => {
-                                    setImages(images.filter((current) => current !== data))
-                                }}
-                                onChange={(data: any) => {
-                                    //@ts-ignore
-                                    setImages([...images, data])
-                                }}
-                                value={images}
-                            />
-                        </Form.Item>
-                        <div className="flex items-center gap-3">
-                            {images && images.map((item, index) => (
-                                <div
-                                    className=" relative w-[150px] h-[150px] rounded-md overflow-hidden cursor-pointer"
-                                    key={index}>
-                                    <div className="z-10 absolute top-2 right-2">
-                                        <Button
-                                            htmlType="button"
-                                            onClick={() => {
-                                                setImages(images.filter((current) => current !== item))
-                                            }}
-                                        >
-                                            X
-                                        </Button>
-                                    </div>
-                                    <img className="object-cover" alt="Image" src={item}/>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <Form.Item name="form_name" label="Platform name" className="custom_ant_label" rules={[rule]}
+                    <Form.Item name="form_name" label="form_name" className="custom_ant_label" rules={[rule]}
                                required>
                         <Input placeholder="Tiktok.."/>
                     </Form.Item>
-                    <Form.Item
-                        label="Status"
-                        name="status"
-                        valuePropName="checked"
-                        rules={[rule]} required
-                        className="custom_ant_label "
 
-                    >
-                        <Checkbox>
-                            {Form.useWatch('status', form) == true ? 'Show' : "Hidden"}
-                        </Checkbox>
+                    <Form.Item label="live_type_id" name="live_type_id" className="custom_ant_label" rules={[rule]}>
+                        <Select>
+                            {liveStreamTypeData && liveStreamTypeData?.map((item) => (
+                                <Select.Option value={item?.id} key={item?.id}>
+                                    {item?.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
                     </Form.Item>
 
                 </Card>
@@ -120,7 +78,7 @@ export function PlatformForm({onFinish, form,handleReset, images, setImages,rule
                                         <div key={key} className="grid grid-cols-3 gap-5">
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'name']}
+                                                name={[name, 'field_name']}
                                                 rules={[{required: true, message: 'Missing name'}]}
 
                                             >
@@ -129,7 +87,7 @@ export function PlatformForm({onFinish, form,handleReset, images, setImages,rule
 
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'type']}
+                                                name={[name, 'field_data']}
                                                 rules={[{required: true, message: 'Missing type'}]}
                                                 style={{minWidth: '350px'}}
                                             >

@@ -15,7 +15,7 @@ export default function ProfileLayout({children}: IProfile) {
                 <aside className="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-r md:sticky md:block">
                         <SidebarNav items={dashboardConfig.sidebarNav} className="p-1"  type="auth"/>
                 </aside>
-                <main className="flex w-full flex-col overflow-hidden mt-[3.5rem]">{children}</main>
+                <main className="flex w-full flex-col overflow-hidden">{children}</main>
             </div>
         </div>
 

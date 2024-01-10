@@ -2,15 +2,18 @@
 import  {AxiosResponse} from 'axios';
 import {useEffect} from 'react';
 import useRefreshToken from './useRefreshToken';
-import {useAuth} from '@/lib/hooks/use-auth';
 import { httpAuth } from "@/config/httpAuth";
+import useLocalStorage from "@/lib/hooks/useLocalStorage";
+import {redirect, useRouter} from "next/navigation";
+import {toast} from "react-hot-toast";
+import {useAuth} from "@/lib/hooks/use-auth";
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
-    const {auth} = useAuth();
+    const auth = JSON.parse((localStorage.getItem('auth')!))
+
 
     useEffect(() => {
-        // Check if we are on the client-side before using useEffect
         if (typeof window !== 'undefined') {
             if(auth) {
                 const token = auth.token
@@ -27,7 +30,7 @@ const useAxiosPrivate = () => {
                     (response: AxiosResponse) => response,
                     async (error) => {
                         const prevRequest = error?.config;
-                        if (error?.response?.status === 403 && !prevRequest?.sent) {
+                        if (error?.response?.status === 401 && !prevRequest?.sent) {
                             prevRequest.sent = true;
                             const newAccessToken = await refresh();
                             prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;

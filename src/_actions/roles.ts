@@ -72,7 +72,6 @@ const useApiRoles = () => {
             return response.data;
         } catch (error) {
             console.error('Error fetching data:', error);
-            throw error;
         }
     };
     const getAllPermisstion =  async (): Promise<any> => {

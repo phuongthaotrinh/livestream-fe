@@ -8,7 +8,7 @@ import {catchError, formatDate} from "@/lib/helpers";
 import {Checkbox} from "antd"
 import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
-import {Trash, Edit, PlusCircle,Wrench} from "lucide-react"
+import {Trash, Edit, PlusCircle, Wrench} from "lucide-react"
 import clsx from "clsx";
 import {buttonVariants} from "@/components/common/ui/button";
 import {useRouter} from "next/navigation";
@@ -16,14 +16,14 @@ import {useRouter} from "next/navigation";
 interface IPLatformTableShell {
     data: any[]
     pageCount: number,
-    onEdit:(input:any) => void
+    onEdit: (input: any) => void
 }
 
-export  function RolesTableShell({
-                                        data,
-                                        pageCount,
-                                     onEdit
-                                    }: IPLatformTableShell) {
+export function RolesTableShell({
+                                    data,
+                                    pageCount,
+                                    onEdit
+                                }: IPLatformTableShell) {
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
 
@@ -75,9 +75,8 @@ export  function RolesTableShell({
                     const id = row.original.id as string;
                     return (
                         <div className="lowercase truncate ">
-                            <Link href={`/admin/roles/${id}`}>
-                                {row.getValue("name")}
-                            </Link>
+                            {row.getValue("name")}
+
                         </div>
                     )
                 },
@@ -102,62 +101,62 @@ export  function RolesTableShell({
             {
                 id: "actions",
                 cell: ({row}) => (
-                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-6">
 
-                      <button
-                          className="flex items-center gap-2"
+                        <button
+                            className="flex items-center gap-2"
                             onClick={() => toast('Feature is not enable')}
-                      >
-                          <div
-                              className={clsx(
-                                  buttonVariants({
-                                      variant: "outline",
-                                      size: "sm",
-                                      className: "h-8",
-                                  })
-                              )}
-                          >
-                              <Trash className="mr-2 h-4 w-4" aria-hidden="true"/>
-                              Delete
-                          </div>
-                      </button>
-                      <button
-                          className="flex items-center gap-2"
+                        >
+                            <div
+                                className={clsx(
+                                    buttonVariants({
+                                        variant: "outline",
+                                        size: "sm",
+                                        className: "h-8",
+                                    })
+                                )}
+                            >
+                                <Trash className="mr-2 h-4 w-4" aria-hidden="true"/>
+                                Delete
+                            </div>
+                        </button>
+                        <button
+                            className="flex items-center gap-2"
                             onClick={() => onEdit(row.original)}
-                      >
-                          <div
-                              className={clsx(
-                                  buttonVariants({
-                                      variant: "outline",
-                                      size: "sm",
-                                      className: "h-8",
-                                  })
-                              )}
-                          >
-                              <Edit className="mr-2 h-4 w-4" aria-hidden="true"/>
-                              Edit
-                          </div>
-                      </button>
+                        >
+                            <div
+                                className={clsx(
+                                    buttonVariants({
+                                        variant: "outline",
+                                        size: "sm",
+                                        className: "h-8",
+                                    })
+                                )}
+                            >
+                                <Edit className="mr-2 h-4 w-4" aria-hidden="true"/>
+                                Edit
+                            </div>
+                        </button>
 
-                      <button
-                          className="flex items-center gap-2"
-                          onClick={() => router.push(`/admin/roles/permission/${row.original.id}`)}
-                      >
-                          <div
-                              className={clsx(
-                                  buttonVariants({
-                                      variant: "outline",
-                                      size: "sm",
-                                      className: "h-8",
-                                  })
-                              )}
-                          >
-                              <Wrench className="mr-2 h-4 w-4" aria-hidden="true"/>
-                               Permission
-                          </div>
-                      </button>
+                        <button
+                            className="flex items-center gap-2"
+                            onClick={() => router.push(`/admin/roles/permission/${row.original.id}`)}
+                        >
+                            <div
+                                className={clsx(
+                                    buttonVariants({
+                                        variant: "outline",
+                                        size: "sm",
+                                        className: "h-8",
+                                    })
+                                )}
+                            >
+                                <Wrench className="mr-2 h-4 w-4" aria-hidden="true"/>
+                                Permission
+                            </div>
+                        </button>
 
-                  </div>
+                    </div>
 
 
                 ),

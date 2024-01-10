@@ -1,14 +1,13 @@
 "use client";
 
-import {createContext, useState, useEffect} from "react";
+import {createContext, useState, startTransition} from "react";
 import {IAuthSignin, IAuthSignup, IDetailUser} from "@/lib/validation/users";
 import {http} from "@/config/http";
 import useLocalStorage from '@/lib/hooks/useLocalStorage';
 import React from "react";
 import {jwtDecode} from "jwt-decode";
 import useApiUsers from "@/_actions/users"
-import {catchError, hasAdminRole} from "@/lib/helpers"
-import {toast} from "react-hot-toast";
+import {hasAdminRole} from "@/lib/helpers"
 
 interface AuthContextType {
     auth: any | null;
@@ -18,7 +17,7 @@ interface AuthContextType {
     isAdmin: boolean;
     signinAction: (body: IAuthSignin) => Promise<void>;
     signupAction: (body: IAuthSignup) => Promise<void>;
-    setTrigger:  React.Dispatch<React.SetStateAction<boolean>>
+    setTrigger: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const intialContext = {
@@ -51,46 +50,36 @@ const userApiUrl = {
 }
 
 export const AuthProvider = ({children}: any) => {
-    const {getUser} = useApiUsers()
+    const {getUser} = useApiUsers();
     const [auth, setAuth] = useLocalStorage<any | null>('auth', null);
     const [profile, setProfile] = useState<IDetailUser | null>(null);
     const [user, setUser] = useState<any | null>(null);
     const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
     const [trigger, setTrigger] = React.useState<boolean>(false)
-    const [isPending, startTransition] = React.useTransition();
-
 
     React.useEffect(() => {
         if (auth) {
             const decoded: any = jwtDecode(auth.token);
-            setUser(decoded.user)
+            setUser(decoded.user);
         }
     }, [auth])
 
     const fetchData = () => {
-
-        startTransition(() => {
-            toast.promise((getUser(Number(user.id))),
-                {
-                    loading: "Loading...",
-                    success: (data) => {
-                        setProfile(data);
-                        const isadmin = hasAdminRole(data.role as any[]);
-                        setIsAdmin(isadmin)
-                        return <></>
-                    },
-                    error: (err: unknown) => catchError(err),
-                }
-            )
-
+        (async () => {
+            await getUser(Number(user?.id)).then((data) => {
+                setProfile(data);
+                setProfile(data);
+                const isAdmin = hasAdminRole(data.role as any[]);
+                setIsAdmin(isAdmin)
+            })
         })
+        ()
+
     }
     React.useEffect(() => {
-        if ((user && auth)) {
-            fetchData()
-        }
-        if (trigger) fetchData()
-    }, [auth, user,trigger]);
+        if (auth?.token && user?.id) fetchData();
+        if (trigger) fetchData();
+    }, [user, trigger]);
 
 
     async function signupAction(
@@ -101,7 +90,7 @@ export const AuthProvider = ({children}: any) => {
 
 
     async function signinAction(body: IAuthSignin): Promise<void> {
-        const { data } = await http.post(userApiUrl.signin, body);
+        const {data} = await http.post(userApiUrl.signin, body);
         if (data) {
             setAuth(data);
         }

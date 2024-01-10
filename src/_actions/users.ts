@@ -77,7 +77,7 @@ const useApiUsers = () => {
                     }
                     return null;
                 }));
-                const setResult = getUniqueRecordsByField(results, 'permission_id')
+                const setResult = getUniqueRecordsByField(results, 'permission_id',"multi")
                 permissions = [...setResult]
             }
 

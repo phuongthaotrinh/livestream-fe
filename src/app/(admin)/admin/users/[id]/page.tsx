@@ -43,16 +43,13 @@ export default function UserIdPage({params}: IParams) {
     }
 
 
-    console.log('userEdit',userEdit)
-
-
     React.useEffect(() => {
         if (params.id || trigger) fetchData()
     }, [params.id, trigger]);
 
     React.useEffect(() => {
         if (profile && params.id) {
-            const hasPer = hasActivePermission(profile.permissions, [3]);
+            const hasPer = hasActivePermission(profile.permissions, [2]);
             toast(`hasRole: ${hasPer}`, )
             if (Number(params.id == profile.user.id && hasPer)) {
                 setShowCreateBtn(true)

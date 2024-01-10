@@ -77,7 +77,7 @@ export const PermissionTemplate: React.FC = () => {
     const [editingKey, setEditingKey] = useState('');
     const id = React.useId();
     const [keyRadio, setKeyRadio] = useState<any>([]);
-
+    const [isPending, startTransition] = React.useTransition();
     //roles after convert to CheckBoxValue
     const [roles, setRoles] = useState([]);
 
@@ -265,25 +265,29 @@ export const PermissionTemplate: React.FC = () => {
 
 
     const handleAdd = (values: any) => {
-        toast.promise((createPermisstion({name: values.name})),
-            {
-                loading: "Creating permissions...",
-                success: (payload: any) => {
-                    const newData = payload?.data as any;
-                    const dataNew = {
-                        ...newData,
-                        key: `${newData.name}.${count}.${id}`,
-                        assign: []
-                    }
+        console.log('handleAdd', values)
+      startTransition(() => {
+          toast.promise((createPermisstion(values)),
+              {
+                  loading: "Creating permissions...",
+                  success: (payload: any) => {
+                      console.log('payload', payload)
+                      const newData = payload?.data as any;
+                      const dataNew = {
+                          ...newData,
+                          key: `${newData.name}.${count}.${id}`,
+                          assign: []
+                      }
 
-                    setData([...data, dataNew])
-                    setOpenModal(false);
-                    form.resetFields();
-                    return 'Creating permissions success'
-                },
-                error: (err: unknown) => catchError(err),
-            }
-        )
+                      setData([...data, dataNew])
+                      setOpenModal(false);
+                      form.resetFields();
+                      return 'Creating permissions success'
+                  },
+                  error: (err: unknown) => catchError(err),
+              }
+          )
+      })
     }
 
     const saveTable = () => {
