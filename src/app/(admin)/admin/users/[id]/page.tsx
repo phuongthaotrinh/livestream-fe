@@ -65,7 +65,7 @@ export default function UserIdPage({params}: IParams) {
     React.useEffect(() => {
         if (Number(params.id) === profile?.user?.id) setUserEdit(profile)
     }, [params.id, profile]);
-    {!mounted  && <>Loading...</>}
+    {!mounted  && <>Loading</>}
 
     return (
         <React.Suspense fallback={<>Loading...</>}>
