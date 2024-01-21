@@ -10,5 +10,20 @@ export const platformsSchema = z.object({
     }).describe('status')
 });
 
-export type IPlatform = z.infer<typeof platformsSchema>;
 
+export const platformsFieldsSchema = z.object({
+    name: z.string().min(3).describe("name"),
+    type: z.string().describe("type"),
+    id: z.string().describe('id')
+});
+
+export const userHasPlatformSchema = z.object({
+    id:z.number().describe('id'),
+    platform_ids:z.array(z.string()),
+    user_id:z.number().describe('user_id')
+
+})
+
+export type IPlatform = z.infer<typeof platformsSchema>;
+export type IPlatformFields = z.infer<typeof platformsFieldsSchema>;
+export type IUserHasPlatform = z.infer<typeof userHasPlatformSchema>

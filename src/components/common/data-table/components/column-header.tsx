@@ -7,14 +7,14 @@ import {
 import { type Column } from "@tanstack/react-table"
 
 import clsx from "clsx";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/common/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/common/ui/dropdown-menu"
 
 interface DataTableColumnHeaderProps<TData, TValue>
     extends React.HTMLAttributes<HTMLDivElement> {

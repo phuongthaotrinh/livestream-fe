@@ -6,8 +6,8 @@ import {MoreVertical } from "lucide-react"
 import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
 import {catchError, formatDate} from "@/lib/helpers";
-import {Button} from "@/components/ui/button"
-import {Checkbox} from "antd"
+import {Button} from "@/components/common/ui/button"
+import {Checkbox, Tag} from "antd"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,7 +15,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/common/ui/dropdown-menu"
 import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 
@@ -73,31 +73,45 @@ export  function NewsTableShell({
             },
 
             {
-                accessorKey: "name",
+                accessorKey: "title",
                 header: ({column}) => (
-                    <DataTableColumnHeader column={column} title="Name"/>
+                    <DataTableColumnHeader column={column} title="Title"/>
                 ),
                 cell: ({row}) => {
-                    const id = row.original._id as string;
+                    const id = row.original.id as string;
                     return (
                         <div className="lowercase truncate ">
-                            <Link href={`/admin/movie-types/${id}`}>
+                            <Link href={`/admin/news/${id}`}>
 
-                                {row.getValue("name")}
+                                {row.getValue("title")}
                             </Link>
                         </div>
                     )
                 },
             },
             {
-                accessorKey: "imdbId",
+                accessorKey: "preview",
                 header: ({column}) => {
                     return (
-                        <DataTableColumnHeader column={column} title="imdbId" />
+                        <DataTableColumnHeader column={column} title="preview" />
                     )
                 },
                 cell: ({row}) =>
-                    <div>{row.getValue("imdbId")}</div>,
+                    <div className="truncate ">{row.getValue("preview")}</div>,
+            },
+            {
+                accessorKey: "status",
+                header: ({column}) => {
+                    return (
+                        <DataTableColumnHeader column={column} title="status" />
+                    )
+                },
+                cell: ({row}) =>
+                    <div>
+                        <Tag color={row.getValue("status") == true ? "#87d068" : '#f50'}>
+                            {row.getValue("status") == true ? "active" : 'block'}
+                        </Tag>
+                    </div>,
             },
             {
                 accessorKey: "createdAt",
@@ -123,36 +137,33 @@ export  function NewsTableShell({
                             <Button
                                 aria-label="Open menu"
                                 variant="ghost"
-                                className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+                                // className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                             >
-                                <MoreVertical className="h-4 w-4" aria-hidden="true"/>
+                                <MoreVertical className="h-4 w-4 text-black" aria-hidden="true"/>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[160px]">
                             <DropdownMenuItem >
                                 <Link
-                                    href={`/admin/movie-types/${row.original._id}`}
+                                    href={`/admin/news/${row.original.id}`}
                                 >
                                     Edit
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem >
-                                <Link href={`/movies/${row.original._id}`}>Client view</Link>
-                            </DropdownMenuItem>
-
                             <DropdownMenuSeparator/>
                             <DropdownMenuItem
                                 onClick={() => {
                                     startTransition(() => {
                                         row.toggleSelected(false)
                                         // @ts-ignore
-                                        toast.promise((deleteProductAction({id: row.original.id})),
+                                        toast.promise((deleteUser({id: row.original.id})),
                                             {
                                                 loading: "Deleting...",
                                                 success: () => "Product deleted successfully.",
                                                 error: (err: unknown) => catchError(err),
                                             }
                                         )
+
                                     })
                                 }}
                                 disabled={isPending}
@@ -202,8 +213,8 @@ export  function NewsTableShell({
             pageCount={pageCount}
             searchableColumns={[
                 {
-                    id: "name",
-                    title: "name",
+                    id: "title",
+                    title: "title",
                 },
             ]}
             newRowLink={`/admin/news/create`}

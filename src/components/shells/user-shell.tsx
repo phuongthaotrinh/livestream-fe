@@ -2,12 +2,12 @@
 
 import * as React from "react"
 import Link from "next/link"
-import {MoreVertical } from "lucide-react"
+import {MoreVertical} from "lucide-react"
 import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
 import {catchError, formatDate} from "@/lib/helpers";
-import {Button} from "@/components/ui/button"
-import {Checkbox} from "antd"
+import {Button} from "@/components/common/ui/button"
+import {Tag} from "antd"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,25 +15,31 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/common/ui/dropdown-menu"
 import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
+import {fallbackImg} from "@/lib/constants/fallbackImg";
+import useApiUsers from "@/_actions/users"
+import {useAuth} from "@/lib/hooks/use-auth";
+import {Checkbox} from "@/components/common/ui/checkbox"
+import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
+import {usePathname} from "next/navigation";
 
 interface ProductsTableShellProps {
     data: any[]
     pageCount: number
 }
 
-export  function UserTableShell({
-                                                 data,
-                                                 pageCount,
-                                             }: ProductsTableShellProps) {
+export function UserTableShell({
+                                   data,
+                                   pageCount,
+
+                               }: ProductsTableShellProps) {
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
-
-    function deleteProductAction({id}: any) {
-
-    }
+    const {deleteUser} = useApiUsers();
+    const {profile} = useAuth();
+    const pathname = usePathname();
 
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
@@ -42,9 +48,12 @@ export  function UserTableShell({
                 id: "select",
                 header: ({table}) => (
                     <Checkbox
-                        checked={table.getIsAllPageRowsSelected()}
-                        onChange={(value: any) => {
-                            table.toggleAllPageRowsSelected(!!value)
+                        checked={
+                            table.getIsAllPageRowsSelected() ||
+                            (table.getIsSomePageRowsSelected() && "indeterminate")
+                        }
+                        onCheckedChange={(value) => {
+                            table.toggleAllPageRowsSelected(!!value);
                             setSelectedRowIds((prev) =>
                                 prev.length === data.length ? [] : data.map((row) => row.id)
                             )
@@ -56,7 +65,7 @@ export  function UserTableShell({
                 cell: ({row}) => (
                     <Checkbox
                         checked={row.getIsSelected()}
-                        onChange={(value) => {
+                        onCheckedChange={(value) => {
                             row.toggleSelected(!!value)
                             setSelectedRowIds((prev) =>
                                 value
@@ -71,17 +80,37 @@ export  function UserTableShell({
                 enableSorting: false,
                 enableHiding: false,
             },
+            {
+                accessorKey: "image",
+                header: ({column}) => (
+                    <DataTableColumnHeader column={column} title="Image"/>
+                ),
+                cell: ({row}) => {
+                    const id = row.original.id as string;
+                    const images = row.original.images as string;
+                    return (
+                        <div className="lowercase truncate ">
+                            <Link href={`/admin/users/${id}`}>
 
+                                <img src={images ? images : fallbackImg}
+                                     className="w-12 h-12"
+
+                                />
+                            </Link>
+                        </div>
+                    )
+                },
+            },
             {
                 accessorKey: "name",
                 header: ({column}) => (
                     <DataTableColumnHeader column={column} title="Name"/>
                 ),
                 cell: ({row}) => {
-                    const id = row.original._id as string;
+                    const id = row.original.id as string;
                     return (
                         <div className="lowercase truncate ">
-                            <Link href={`/admin/movie-types/${id}`}>
+                            <Link href={`/admin/users/${id}`}>
 
                                 {row.getValue("name")}
                             </Link>
@@ -90,14 +119,38 @@ export  function UserTableShell({
                 },
             },
             {
-                accessorKey: "imdbId",
+                accessorKey: "fullName",
                 header: ({column}) => {
                     return (
-                        <DataTableColumnHeader column={column} title="imdbId" />
+                        <DataTableColumnHeader column={column} title="fullName"/>
                     )
                 },
                 cell: ({row}) =>
-                    <div>{row.getValue("imdbId")}</div>,
+                    <div>{row.getValue("fullName")}</div>,
+            },
+            {
+                accessorKey: "email",
+                header: ({column}) => {
+                    return (
+                        <DataTableColumnHeader column={column} title="email"/>
+                    )
+                },
+                cell: ({row}) =>
+                    <div>{row.getValue("email")}</div>,
+            },
+            {
+                accessorKey: "block",
+                header: ({column}) => {
+                    return (
+                        <DataTableColumnHeader column={column} title="status"/>
+                    )
+                },
+                cell: ({row}) =>
+                    <div>
+                        <Tag color={row.getValue("block") == false ? "#87d068" : '#f50'}>
+                            {row.getValue("block") == false ? "active" : 'block'}
+                        </Tag>
+                    </div>,
             },
             {
                 accessorKey: "createdAt",
@@ -123,48 +176,46 @@ export  function UserTableShell({
                             <Button
                                 aria-label="Open menu"
                                 variant="ghost"
-                                className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
                             >
-                                <MoreVertical className="h-4 w-4" aria-hidden="true"/>
+                                <MoreVertical className="h-4 w-4 text-black" aria-hidden="true"/>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[160px]">
-                            <DropdownMenuItem >
+                            <DropdownMenuItem>
                                 <Link
-                                    href={`/admin/movie-types/${row.original._id}`}
+                                    href={`/admin/users/${row.original.id}`}
                                 >
                                     Edit
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem >
-                                <Link href={`/movies/${row.original._id}`}>Client view</Link>
-                            </DropdownMenuItem>
-
                             <DropdownMenuSeparator/>
-                            <DropdownMenuItem
-                                onClick={() => {
-                                    startTransition(() => {
-                                        row.toggleSelected(false)
-                                        // @ts-ignore
-                                        toast.promise((deleteProductAction({id: row.original.id})),
-                                            {
-                                                loading: "Deleting...",
-                                                success: () => "Product deleted successfully.",
-                                                error: (err: unknown) => catchError(err),
-                                            }
-                                        )
-                                    })
-                                }}
-                                disabled={isPending}
-                            >
-                                Delete
-                                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-                            </DropdownMenuItem>
+                            {(profile?.user?.id != row.original.id) && (
+                                <>
+
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            startTransition(() => {
+                                                row.toggleSelected(false)
+                                                // @ts-ignore
+                                                toast.promise((deleteUser({id: row.original.id})),
+                                                    {
+                                                        loading: "Deleting...",
+                                                        success: () => "Product deleted successfully.",
+                                                        error: (err: unknown) => catchError(err),
+                                                    }
+                                                )
+
+                                            })
+                                        }}
+                                        disabled={isPending}
+                                    >
+                                        Delete
+                                        <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                                    </DropdownMenuItem>
+                                </>
+                            )}
                         </DropdownMenuContent>
-
                     </DropdownMenu>
-
-
                 ),
             },
         ],
@@ -175,7 +226,7 @@ export  function UserTableShell({
         toast.promise(
             Promise.all(
                 selectedRowIds.map((id) =>
-                    deleteProductAction({
+                    deleteUser({
                         id,
                     })
                 )
@@ -194,19 +245,19 @@ export  function UserTableShell({
         )
     }
 
-
     return (
-        <DataTable
+        <DataTableRaw
+             showToolbar={true}
             columns={columns}
             data={data}
-            pageCount={pageCount}
+             nameExport="users"
             searchableColumns={[
                 {
                     id: "name",
                     title: "name",
                 },
             ]}
-            newRowLink={`/admin/users/create`}
+            newRowLink={`${pathname}/create`}
             deleteRowsAction={() => void deleteSelectedRows()}
         />
     )
