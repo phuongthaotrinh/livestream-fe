@@ -10,9 +10,10 @@ interface ISubscribeForm {
     isPending:boolean
 }
 export function SubscribeForm({form, onFinish, rule,isPending}:ISubscribeForm) {
+    const id = React.useId()
     return (
         <>
-            <Form onFinish={onFinish} form={form}>
+            <Form onFinish={onFinish} form={form} name={`subscribe_form.${id}`}>
                 <label htmlFor="search"
                        className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                 <div className="relative">

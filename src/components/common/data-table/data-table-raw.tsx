@@ -27,18 +27,31 @@ import {
 
 import {DataTablePagination} from "@/components/common/data-table/components/pagination"
 import {DataTableToolbar} from "@/components/common/data-table/components/toolbar"
-import {useEffect} from "react";
+import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/types";
+
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    showToolbar: boolean
+    showToolbar: boolean,
+    searchableColumns?: DataTableSearchableColumn<TData>[]
+    filterableColumns?: DataTableFilterableColumn<TData>[],
+    newRowLink?: string,
+    deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>,
+    newRowAction?: React.MouseEventHandler<HTMLButtonElement>,
+    nameExport?:string
 }
 
 export function DataTableRaw<TData, TValue>({
                                                 columns,
                                                 data,
-                                                showToolbar=true
+                                                showToolbar=true,
+                                                searchableColumns,
+                                                filterableColumns = [],
+                                                newRowLink,
+                                                newRowAction,
+                                                deleteRowsAction,
+                                                nameExport
                                             }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] =
@@ -55,7 +68,7 @@ export function DataTableRaw<TData, TValue>({
             sorting,
             columnVisibility,
             rowSelection,
-            columnFilters,
+            columnFilters
         },
         enableRowSelection: true,
         onRowSelectionChange: setRowSelection,
@@ -68,10 +81,20 @@ export function DataTableRaw<TData, TValue>({
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-    })
+    });
+
     return (
         <div className="space-y-4 w-full">
-            {showToolbar && <DataTableToolbar table={table}/> }
+            <DataTableToolbar table={table}
+                              filterableColumns={filterableColumns}
+                              searchableColumns={searchableColumns}
+                              newRowLink={newRowLink}
+                              deleteRowsAction={deleteRowsAction}
+                              newRowAction={newRowAction}
+                              data={data}
+                              nameExport={nameExport}
+
+            />
 
             <div className="rounded-md border">
                 <Table>
@@ -94,8 +117,8 @@ export function DataTableRaw<TData, TValue>({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
+                        {table && table?.getRowModel()?.rows?.length ? (
+                            table?.getRowModel()?.rows.map((row) => (
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}

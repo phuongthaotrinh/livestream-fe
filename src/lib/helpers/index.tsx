@@ -1,10 +1,16 @@
 import * as z from "zod";
 import {toast} from "react-hot-toast"
-import {redirect, usePathname, useRouter} from "next/navigation";
+import {usePathname} from "next/navigation";
 import * as React from "react";
 import useIsomorphicLayoutEffect from "@/lib/hooks/use-isomorphic-layout-effect";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {MenuItem} from "@/types";
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs))
+}
 
 
 export function catchError(err: unknown) {
@@ -100,9 +106,9 @@ export function getUniqueRecordsByField(
 }
 
 
-export function hasActivePermission(userPermissions: any[], allowedPermissions: number[]): boolean {
+export function hasActivePermission(userPermissions: any[], allowedPermissions: string): boolean {
     return userPermissions.some(
-        (permission) => permission.status === "on" && allowedPermissions.includes(Number(permission.permission.id))
+        (permission) => permission.status === "on" && allowedPermissions.includes((permission.permission.name))
     );
 }
 
@@ -117,5 +123,6 @@ export function getItem(label: React.ReactNode, key: React.Key, icon?: React.Rea
 }
 
 export function hasAdminRole(roles: any[]) {
+    if(roles?.length == 0) return  false
     return roles.some(role => role.role.name === 'admin');
 }

@@ -11,8 +11,9 @@ interface ILiveStreamTypeForm {
 }
 
 export function LiveStreamTypeForm({form,rule,isPending, onFinish}: ILiveStreamTypeForm) {
+    const id = React.useId()
     return (
-        <Form name="contact_form" form={form}  layout="vertical" onFinish={onFinish}>
+        <Form name={`livestream_type.${id}`} form={form}  layout="vertical" onFinish={onFinish}>
             <Form.Item name="name" label="Name" className="custom_ant_label" rules={[rule]}>
                 <Input placeholder="Sport" />
             </Form.Item>

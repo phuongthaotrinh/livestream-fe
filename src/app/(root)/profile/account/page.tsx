@@ -13,11 +13,9 @@ import {Button} from "@/components/common/ui/button";
 import {useRouter} from "next/navigation"
 
 export default function AccountPage() {
+    const router = useRouter();
     const {profile} = useAuth();
     if (!profile) return null;
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const router = useRouter();
 
     const items: CollapseProps['items'] = [
         {
@@ -95,31 +93,7 @@ export default function AccountPage() {
 
 
                 {/*check if role !== admin => disable this section */}
-                <section>
-                    <h3 className="font-semibold text-xl">Your Groups</h3>
-                    <small>All yours group you manager is here </small>
 
-                    {/*If you have at least 1 group*/}
-                    <div className="mt-8 grid md:grid-cols-2 gap-6">
-                        <Card bodyStyle={{padding: '10px'}}>
-                            <div className="space-y-3">
-                                <h3 className="font-semibold text-xl ">Group 1</h3>
-                                <p className="flex items-center font-semibold "><Users
-                                    className="mr-2 w-4"/>125 members</p>
-                                <div className="flex justify-between items-center">
-                                    <Button variant="secondary" color="text-[#103fef]">
-                                        Watch members
-                                    </Button>
-                                    <p className="mt-2 text-sm">
-                                        Create at: 21/09/2023 <br/>
-                                        Lasted at: 20/12/2023
-                                    </p>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-
-                </section>
             </div>
         </>
     )

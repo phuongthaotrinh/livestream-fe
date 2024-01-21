@@ -9,6 +9,8 @@ import {usePlatform} from "@/lib/hooks/use-platform";
 
 export default function Platform() {
     const {platforms, liveStreamTypeData, setTrigger} = usePlatform()
+    console.log("platforms",platforms)
+
     return (
         <>
 

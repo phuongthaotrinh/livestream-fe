@@ -13,9 +13,10 @@ interface IContactForm {
 }
 
 export function ContactForm({form, rule, isPending, onFinish}: IContactForm) {
+    const id = React.useId()
     return (
         <>
-            <Form name="contact_form" form={form} className="mt-20 w-2/3" layout="vertical" onFinish={onFinish}>
+            <Form name={`contact_form.${id}`} form={form} className="mt-20 w-2/3" layout="vertical" onFinish={onFinish}>
                 <Form.Item name="name" label="Name" className="custom_ant_label" rules={[rule]}>
                     <Input placeholder="Your name" className="like_tailwind_input_small"/>
                 </Form.Item>

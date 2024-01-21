@@ -19,9 +19,10 @@ interface INewsForm {
 }
 
 export function NewsForm({onFinish, form, rule, images, setImages, formContent, setFormContent, isPending, handleReset}: INewsForm) {
+    const id = React.useId()
     return (
         <>
-            <Form name="form1" layout="vertical" onFinish={onFinish} form={form}>
+            <Form name={`news-form.${id}`} layout="vertical" onFinish={onFinish} form={form}>
 
                 <div className="mb-3">
                     <Form.Item

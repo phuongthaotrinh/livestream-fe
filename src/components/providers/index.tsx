@@ -8,13 +8,13 @@ export default function Providers({children}: { children: React.ReactNode }) {
 
     return (
         <>
+
             <ConfigProvider theme={theme}>
                 <React.Fragment>
                     {children}
                 </React.Fragment>
                 <Toaster/>
             </ConfigProvider>
-
         </>
     )
 }

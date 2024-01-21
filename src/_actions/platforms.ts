@@ -9,8 +9,8 @@ const apiUrl = {
     //platform
     getAll: 'platform/get-all',
     create: 'platform/add-live-stream-platform',
-
-
+    registerPlatform:'platform/register-platform',
+    getRegisteredPlatformByUserId:'platform/get-registered-platform',
     // //live_stream_type
     createLiveStreamTypes: 'platform/add-live-stream-type',
 
@@ -31,8 +31,10 @@ const apiUrl = {
     getFormByLiveTypeId:'platform/get-form-field-by-live-type-id',
 
     createUserSubmissions:'platform/create-new-submiss',
-    getAllFormsRegister:'platform/get-all-forms-register'
+    getAllFormsRegister:'platform/get-all-forms-register',
+    getRegisteredDetailAndResultByUserId:"platform/get-detail-registered-platform",
 
+    getFormData:"platform/get-form-data"
 }
 
 
@@ -254,6 +256,49 @@ const useApiPlatform = () => {
         }
     }
 
+    const registerPlatform = async (payload:any) => {
+        try {
+            const {data} = await axiosInstance.post(apiUrl.registerPlatform, payload);
+            return data
+        } catch (e) {
+            console.log('error', e)
+        }
+    }
+
+    const getRegisteredPlatformByUserId = async (payload:number):Promise<any> => {
+        try {
+            const {data} = await axiosInstance.get(`${apiUrl.getRegisteredPlatformByUserId}/${payload}`);
+            return data
+        } catch (e) {
+            console.log('error', e)
+        }
+    }
+
+
+    function updateAWithPlatformDetails(aData: any[], bData: any[]) {
+        return aData.map(form => {
+            const platformDetails: any[] = bData.filter(platform => form.platform_ids.includes(platform.id));
+            return { ...form, platform_detail: platformDetails };
+        });
+    }
+    const getRegisteredDetailAndResult = async (payload:number):Promise<any> => {
+        try {
+            const {data} = await axiosInstance.get(`${apiUrl.getRegisteredDetailAndResultByUserId}/${payload}`);
+            const result: any[] = updateAWithPlatformDetails(data.userSubmissions,data.platforms);
+            return result
+        } catch (e) {
+            console.log('error', e)
+        }
+    }
+
+    const getFormData = async (payload:{form_id:number}) => {
+        try {
+            const {data} = await axiosInstance.get(`${apiUrl.getFormData}/${payload.form_id}`);
+            return data
+        } catch (e) {
+            console.log('error', e)
+        }
+    }
     return {
         getAll,
         createPlatform,
@@ -266,7 +311,11 @@ const useApiPlatform = () => {
         approveRegisteredPlatform,
         getFormByLiveTypeId,
         createUserSubmissions,
-        getAllFormsRegister
+        getAllFormsRegister,
+        registerPlatform,
+        getRegisteredPlatformByUserId,
+        getRegisteredDetailAndResult,
+        getFormData
     }
 };
 

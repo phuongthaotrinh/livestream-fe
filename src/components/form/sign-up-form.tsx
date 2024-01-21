@@ -16,7 +16,7 @@ export function SignUpForm({form,onFinish,rule,isPending}:ISignUpForm) {
             <Form form={form}
                   onFinish={onFinish}
                   layout="vertical"
-                  name="signin_form"
+                  name="signup_form"
             >
                 <Form.Item name="email" label="Email" className="custom_ant_label" rules={[rule]}
                            required>

@@ -23,11 +23,11 @@ export default function RootLayout({
             <div className="min-h-screen">
                 <AuthProvider>
                     <PlatformProviders>
-                       {children}
+                        {children}
+
                     </PlatformProviders>
                 </AuthProvider>
             </div>
-
         </Providers>
         </body>
         </html>

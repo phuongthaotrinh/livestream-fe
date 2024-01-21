@@ -45,11 +45,11 @@ export function ShellAction({
     );
 
     return isLink && href ? (
-        <Link key={id} aria-label="back" href={href} className={clsx("flex max-w-[100px]", {  "justify-end":!flex })}>
+        <Link key={id} aria-label="back" href={href} className={clsx("flex max-w-[200px]", {  "justify-end":!flex })}>
             <div {...buttonProps}>{renderContent}</div>
         </Link>
     ) : (
-        <div key={id} onClick={actionVoid} className={clsx("cursor-pointer w-full max-w-[100px]", buttonProps.className)} {...props}>
+        <div key={id} onClick={actionVoid} className={clsx("cursor-pointer w-full max-w-[200px]", buttonProps.className)} {...props}>
             {renderContent}
         </div>
     );

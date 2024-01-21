@@ -45,10 +45,11 @@ export function UserForm({onFinish, form, handleReset, setImages, images, rule, 
     const onClose = () => {
         setOpenModal(false)
     }
+    const id = React.useId()
     return (
         <>
             {domLoaded && (
-                <Form name="form1" layout="vertical" onFinish={onFinish} form={form} className="space-y-6">
+                <Form name={`user_form.${id}`} layout="vertical" onFinish={onFinish} form={form} className="space-y-6">
                     <Space align="end">
                         <Form.Item>
                             <Button htmlType="submit" type="primary" disabled={isPending}

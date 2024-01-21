@@ -3,10 +3,7 @@ import  {AxiosResponse} from 'axios';
 import {useEffect} from 'react';
 import useRefreshToken from './useRefreshToken';
 import { httpAuth } from "@/config/httpAuth";
-import useLocalStorage from "@/lib/hooks/useLocalStorage";
-import {redirect, useRouter} from "next/navigation";
-import {toast} from "react-hot-toast";
-import {useAuth} from "@/lib/hooks/use-auth";
+
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();

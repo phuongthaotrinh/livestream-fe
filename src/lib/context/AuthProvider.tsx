@@ -92,8 +92,8 @@ export const AuthProvider = ({children}: any) => {
     async function signinAction(body: IAuthSignin): Promise<void> {
         const {data} = await http.post(userApiUrl.signin, body);
         if (data) {
-            setAuth(data);
-        }
+             setAuth(data);
+       }
     }
 
     return (

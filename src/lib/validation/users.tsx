@@ -81,5 +81,7 @@ export interface IDetailUser extends IUsers{
     user: IUsers | undefined;
     role: UserRole[]| undefined;
     permissions: any,
-    groups:any[]
+    groups:any[],
+    platforms:any[],
+    user_has_pl_id:any[]
 }

@@ -71,7 +71,7 @@ const FormItemRow: React.FC<any> = ({
 };
 
 
-export default function FSubmissionForm({params}:IParams) {
+export default function FSubmissionForm({params}:{params:{form_id:number}}) {
     const searchParams = useSearchParams();
     const [data, setData]  = React.useState<any>();
     const [fields, setFields]  = React.useState<any>();
@@ -80,9 +80,7 @@ export default function FSubmissionForm({params}:IParams) {
     const [form] = Form.useForm();
     const {getFormByLiveTypeId,createUserSubmissions} = useApiPlatform();
     const {profile} = useAuth()
-    const {platforms}  = usePlatform()
     const router = useRouter();
-
 
     useIsomorphicLayoutEffect(() => {
         const type = JSON.parse(searchParams.get('type')!);
@@ -125,7 +123,6 @@ export default function FSubmissionForm({params}:IParams) {
         values.field_data = groupFied(values);
         values.form_field_id = Number(data?.form_field_id);
         values.field_id = Number(data?.id);
-
         startTransition(() => {
             toast.promise((createUserSubmissions(values)),{
                 loading: "loading...",
@@ -158,7 +155,7 @@ console.log('data__data', data)
                                 size="small"
                                 placeholder="Please select platform to show"
                                 style={{ width: '100%' }}
-                                options={platforms.map((item,index) => {
+                                options={profile?.platforms?.map((item:any,index:number) => {
                                     return {
                                         key:index,
                                         label: item?.name,

@@ -15,9 +15,10 @@ interface ISliders {
     isPending: boolean
 }
 export function SliderForm ({onFinish, form,setImages, images, rule,isPending, handleReset}:ISliders) {
+    const id = React.useId()
     return (
         <>
-            <Form name="form1" layout="vertical" onFinish={onFinish} form={form}>
+            <Form name={`slider_form.${id}`} layout="vertical" onFinish={onFinish} form={form}>
 
                 <div className="mb-3">
                     <Form.Item

@@ -185,6 +185,7 @@ export default function EditPromissionForRole({
     const permissionCount = `${permissionsOfRole.length}/${Number(permissionsOfRole.length) + Number(allPer.length)}`
     return (
         <>
+
             <Space className={"flex items-center justify-between"}>
                 <PageHeader title={`Permissions (${permissionCount})`}
                             desc={`Role: ${roleName?.name}`}

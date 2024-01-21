@@ -25,7 +25,7 @@ export function PlatformForm({onFinish, form, handleReset,rule}: IPlatformForm) 
 
     return (
         <>
-            <Form name="form1" layout="vertical"
+            <Form name="platform_form" layout="vertical"
                   initialValues={{status: true}}
                   onFinish={onFinish} form={form}>
                 <Space align="end" className="mt-3">

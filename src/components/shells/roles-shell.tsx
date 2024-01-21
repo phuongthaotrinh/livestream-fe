@@ -12,6 +12,7 @@ import {Trash, Edit, PlusCircle, Wrench} from "lucide-react"
 import clsx from "clsx";
 import {buttonVariants} from "@/components/common/ui/button";
 import {useRouter} from "next/navigation";
+import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
 
 interface IPLatformTableShell {
     data: any[]
@@ -191,10 +192,9 @@ export function RolesTableShell({
 
 
     return (
-        <DataTable
+        <DataTableRaw
             columns={columns}
             data={data}
-            pageCount={pageCount}
             searchableColumns={[
                 {
                     id: "name",
@@ -203,6 +203,7 @@ export function RolesTableShell({
             ]}
             newRowLink={undefined}
             deleteRowsAction={() => void deleteSelectedRows()}
+            showToolbar={true}
         />
     )
 }

@@ -22,6 +22,8 @@ import {fallbackImg} from "@/lib/constants/fallbackImg";
 import useApiUsers from "@/_actions/users"
 import {useAuth} from "@/lib/hooks/use-auth";
 import {Checkbox} from "@/components/common/ui/checkbox"
+import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
+import {usePathname} from "next/navigation";
 
 interface ProductsTableShellProps {
     data: any[]
@@ -31,11 +33,13 @@ interface ProductsTableShellProps {
 export function UserTableShell({
                                    data,
                                    pageCount,
+
                                }: ProductsTableShellProps) {
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
     const {deleteUser} = useApiUsers();
     const {profile} = useAuth();
+    const pathname = usePathname();
 
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
@@ -143,8 +147,8 @@ export function UserTableShell({
                 },
                 cell: ({row}) =>
                     <div>
-                        <Tag color={row.getValue("block") == 0 ? "#87d068" : '#f50'}>
-                            {row.getValue("block") == 0 ? "active" : 'block'}
+                        <Tag color={row.getValue("block") == false ? "#87d068" : '#f50'}>
+                            {row.getValue("block") == false ? "active" : 'block'}
                         </Tag>
                     </div>,
             },
@@ -241,38 +245,19 @@ export function UserTableShell({
         )
     }
 
-    const userStatus = [
-        {
-            label: 'avtive',
-            value: '0'
-        },
-        {
-            label: 'block',
-            value: '1'
-        }
-    ]
     return (
-        <DataTable
+        <DataTableRaw
+             showToolbar={true}
             columns={columns}
             data={data}
-            pageCount={pageCount}
+             nameExport="users"
             searchableColumns={[
                 {
                     id: "name",
                     title: "name",
                 },
             ]}
-            filterableColumns={[
-                {
-                    id: "block",
-                    title: "status",
-                    options: userStatus.map((category) => ({
-                        label: category.label,
-                        value: category.value,
-                    })),
-                },
-            ]}
-            newRowLink={`/admin/users/create`}
+            newRowLink={`${pathname}/create`}
             deleteRowsAction={() => void deleteSelectedRows()}
         />
     )
