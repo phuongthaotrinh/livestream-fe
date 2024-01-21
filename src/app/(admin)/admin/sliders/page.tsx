@@ -1,13 +1,13 @@
 'use client';
-import Link from "next/link"
+
 import * as React from "react";
 import {PageHeader} from "@/components/common/page-header";
 import {SliderShell} from "@/components/shells/slider-shell"
-import  useApiSliders from "@/_actions/sliders"
+import  {useApiAdditional} from "@/_actions/additional"
 export default function Sliders() {
     const [pending, startTransition] = React.useTransition();
     const [sliders, setSliders] = React.useState([]);
-    const {getSliders} = useApiSliders();
+    const {getSliders} = useApiAdditional();
 
     React.useEffect(() => {
         startTransition(() => {

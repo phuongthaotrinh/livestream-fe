@@ -13,13 +13,29 @@ import Link from "next/link";
 import Index from "@/layouts/root/header/components/user-nav";
 import {Grid, Divider} from "antd";
 import {useGetLastPath} from "@/lib/helpers";
-import useIsomorphicLayoutEffect from "@/lib/hooks/use-isomorphic-layout-effect"
+import useIsomorphicLayoutEffect from "@/lib/hooks/use-isomorphic-layout-effect";
+import {SidebarNav} from "@/components/root/profile/side-bar-nav";
+
+import {dashboardConfig} from "@/lib/constants/navbar-config";
+
+const maxRotate = 45;
+const manageMouseMove = (e: React.MouseEvent, plane: React.RefObject<HTMLDivElement>) => {
+    const x = e.clientX / window.innerWidth;
+    const y = e.clientY / window.innerHeight;
+    const perspective = window.innerWidth * 4;
+    const rotateX = maxRotate * x - maxRotate / 2;
+    const rotateY = (maxRotate * y - maxRotate / 2) * -1;
+    if (plane.current) {
+        plane.current.style.transform = `perspective(${perspective}px) rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
+    }
+};
+const words = ['Make', 'Streaming', 'Easier', 'With', 'Us'];
 
 export const Header = () => {
     const [init, setInit] = useState(false);
     const isHome = useGetLastPath();
 
-    useIsomorphicLayoutEffect(() => {
+    useEffect(() => {
         initParticlesEngine(async (engine: Engine) => {
             await loadFull(engine);
         }).then(() => {
@@ -33,37 +49,27 @@ export const Header = () => {
 
     const memoizedOptions = useMemo(() => options, []);
     const plane = useRef<HTMLDivElement>(null);
-    const maxRotate = 45;
 
-    const manageMouseMove = (e: React.MouseEvent) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        const perspective = window.innerWidth * 4;
-        const rotateX = maxRotate * x - maxRotate / 2;
-        const rotateY = (maxRotate * y - maxRotate / 2) * -1;
-        if (plane.current) {
-            plane.current.style.transform = `perspective(${perspective}px) rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
-        }
-    };
+
     const {xs, sm} = Grid.useBreakpoint();
-    const words = ['Make', 'Streaming', 'Easier', 'With', 'Us'];
+
     if (init) {
         return (
             <>
                 {isHome === "" ? (
                     <>
-                       <div className="absolute top-0">
-                           <Particles
-                               id="tsparticles"
-                               particlesLoaded={particlesLoaded}
-                               options={memoizedOptions}
-                           />
-                       </div>
+                        <div className="absolute top-0">
+                            <Particles
+                                id="tsparticles"
+                                particlesLoaded={particlesLoaded}
+                                options={memoizedOptions}
+                            />
+                        </div>
                         <div
                             className={'text-black grid md:grid-cols-2 sm:grid-cols-1 container h-screen max-h-screen'}>
 
                             {/*text 3d*/}
-                            <div onMouseMove={(e) => manageMouseMove(e)}
+                            <div onMouseMove={(e) => manageMouseMove(e, plane)}
                                  className={'container_page'}
                             >
                                 <div ref={plane} className={'body_page'}>
@@ -80,8 +86,7 @@ export const Header = () => {
                             })}>
                                 <div className=" w-full p-2 flex justify-end ">
                                     <div className="flex items-center gap-4">
-                                        <Link href="/">Home</Link>
-                                        <Link href="/post">News</Link>
+                                        <SidebarNav items={dashboardConfig.homeNav}  type="home" />
                                         <Index/>
                                     </div>
                                 </div>
@@ -92,12 +97,6 @@ export const Header = () => {
                                 </div>
                             </div>
 
-                            {/*<div className={clsx({*/}
-                            {/*    'block order-1': xs,*/}
-                            {/*    'hidden': !xs*/}
-                            {/*})}>*/}
-                            {/*    bugger menu*/}
-                            {/*</div>*/}
                         </div>
 
                     </>
@@ -114,8 +113,7 @@ export const Header = () => {
                                         </Link>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <Link href="/">Home</Link>
-                                        <Link href="/post">News</Link>
+                                        <SidebarNav items={dashboardConfig.homeNav}  type="home" />
                                         <Index/>
                                     </div>
                                 </div>

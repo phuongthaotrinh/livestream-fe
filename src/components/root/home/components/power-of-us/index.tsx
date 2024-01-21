@@ -1,10 +1,12 @@
+import Image from "next/image";
+import * as React from "react";
+
 export function PowerOfUs() {
     return (
         <div className="grid md:grid-cols-2 sm:grid-cols-1   gap-6 my-20">
             <div className="background md:order-1 sm:order-2">
-                <img
-                    src="https://wpdemo.vegatheme.com/icos-jasmine/wp-content/uploads/sites/20/2018/07/graph-jasmine-b.png"
-                    alt="powerofus" className="max-h-96 w-auto"/>
+                <Image width={500} height={500} loading="lazy" objectFit="cover" src="/images/graph-jasmine-b.png"
+                       alt="graph-jasmine-b"/>
             </div>
             <div className={'content max-w-md '}>
                 <h6 className="relative heading-sm-s2 animated fadeInUp uppercase text-[#16a1ff] my-4

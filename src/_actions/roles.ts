@@ -9,7 +9,17 @@ const apiUrl = {
 
     //permission
     createPermissions: 'role-per/add-per',
-    getAllPermisstion: 'role-per/get-all-permission'
+    getAllPermisstion: 'role-per/get-all-permission',
+
+    assignRoleForPermission:'role-per/assign-role-for-per',
+
+    getPermissionOfRole:'role-per/get-per-belong-to-role',
+
+
+    //assign role for user
+    assignRoleForUser: 'role-per/assign-role-for-user',
+    getRoleOfUser: 'role-per/get-role-belong-to-user',
+    deletePermission: 'role-per/delete-permission'
 }
 
 
@@ -63,7 +73,6 @@ const useApiRoles = () => {
             return response.data;
         } catch (error) {
             console.error('Error fetching data:', error);
-            throw error;
         }
     };
     const getAllPermisstion =  async (): Promise<any> => {
@@ -87,12 +96,58 @@ const useApiRoles = () => {
     };
 
 
+    // assign role for permissions
+    const assignRoleForPermission = async (body: any) => {
+        try {
+            const response = await axiosInstance.post(apiUrl.assignRoleForPermission, body);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
 
+
+// get permission belong to role
+
+    const getPermissionOfRole = async (payload: any) => {
+        try {
+            const response = await axiosInstance.get(`${apiUrl.getPermissionOfRole}/${payload?.id ? payload?.id:payload}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+
+    const assignRoleForUser = async (body: any) => {
+        try {
+            const response = await axiosInstance.post(apiUrl.assignRoleForUser, body);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+
+    const deletePer = async (payload: number) => {
+        try {
+            const response = await axiosInstance.delete(`${apiUrl.deletePermission}/${payload}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
     return {
         createRole,
         getRoles,
         createPermisstion,
-        getAllPermisstion
+        getAllPermisstion,
+        assignRoleForPermission,
+        getPermissionOfRole,
+        assignRoleForUser,
+        deletePer
     };
 };
 

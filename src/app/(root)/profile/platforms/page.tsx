@@ -1,13 +1,20 @@
-'use client'
+"use client";
+
+
+import {RegisterPlatformsCard} from "@/components/admin/users/user-card/register-platform-card";
 import * as React from "react";
-import {PageHeader} from "@/components/common/page-header";
+import {useAuth} from "@/lib/hooks/use-auth";
 
-
-export default function Platforms() {
-
+export default function AuthPlatform () {
+    const {profile, setTrigger} = useAuth();
     return (
         <>
-            <PageHeader title="Platforms" desc="Manage your platforms settings"/>
+            <RegisterPlatformsCard data={profile?.platforms}
+                                   setTrigger={setTrigger}
+                                   showCreateBtn={true}
+                                   user_has_pl_id={profile?.user_has_pl_id}
+
+            />
         </>
     )
 }

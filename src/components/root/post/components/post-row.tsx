@@ -15,26 +15,23 @@ export function PostRow ({data}:IPostRow) {
             <div className="flex items-center gap-4 flex-wrap">
                 {data.map((item, index) => (
                     <div className="max-w-xs rounded overflow-hidden shadow-lg cursor-pointer" key={index}
-                         title={item.title}
-                         onClick={() => router.push(`/post/${item.title}-${index}`)}
+                         title={item?.title}
+                         onClick={() => router.push(`/post/${item?.id}`)}
                     >
                         <img className="w-full max-h-[194px]"
-                             src={'https://res.cloudinary.com/dr9ebt5bg/image/upload/v1702982830/7744146_u8jb2g.jpg'}
-                             alt="Sunset in the mountains"/>
+                             src={item?.image_link}
+                             alt="Sunset in the mountains"
+                        style={{width: '320px', maxWidth: '320px', objectFit: 'cover'}}
+
+                        />
                         <div className="p-4">
-                            <div className="font-bold text-xl mb-2">{item.title}-{index}</div>
+                            <div className="font-bold text-xl mb-2">{item?.title}</div>
                             <p className="text-gray-700 text-base">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla!
-                                Maiores et perferendis eaque, exercitationem praesentium nihil.
+                                {item?.preview}
                             </p>
                         </div>
                         <div className="px-4 pt-4 pb-2">
-                                <span
-                                    className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
-                            <span
-                                className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
-                            <span
-                                className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
+                              Read
                         </div>
                     </div>
                 ))}

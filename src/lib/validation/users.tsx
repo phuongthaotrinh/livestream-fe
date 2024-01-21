@@ -1,10 +1,10 @@
 import {z} from "zod";
 
 
-const Roles = [
+export const Roles = [
     'user',
     'admin',
-    'superAdmin',
+    'guest',
 ] as const
 
 export const usersSchema = z.object({
@@ -19,10 +19,13 @@ export const usersSchema = z.object({
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/, {
             message:
                 "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character",
-        }), roles: z.array(z.enum(Roles)).describe("Roles"),
+        }),
+    role: z.any().describe("Roles"),
     email: z.string().email(),
     address: z.string(),
-    phoneNumber: z.string()
+    phoneNumber: z.string(),
+    id:z.number(),
+    images:z.any()
 });
 export const authSigninSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -53,9 +56,32 @@ export const authSignupSchema = z.object({
         }),
 
     verifyPassword: z.string().min(8),
+
 })
 
 export type IUsers = z.infer<typeof usersSchema>;
 export type IAuthSignin = z.infer<typeof authSigninSchema>;
 export type IAuthSignup = z.infer<typeof authSignupSchema>
 
+interface UserRole {
+    id: number;
+    role_id: number;
+    user_id: number;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    role: {
+        id: number;
+        name: string;
+    };
+}
+
+
+export interface IDetailUser extends IUsers{
+    user: IUsers | undefined;
+    role: UserRole[]| undefined;
+    permissions: any,
+    groups:any[],
+    platforms:any[],
+    user_has_pl_id:any[]
+}

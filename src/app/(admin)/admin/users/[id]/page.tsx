@@ -1,33 +1,42 @@
 'use client';
 
-import {Card, Button, Space, theme, Collapse} from "antd"
+import {Space} from "antd"
 import {PageHeader} from "@/components/common/page-header";
-import * as React from "react"
-import {useParams} from "next/navigation";
-import Link from "next/link";
-import {MoveLeft, Pencil, ChevronRight, ChevronDown} from "lucide-react";
-import {platform} from "@/lib/constants/platform";
-import clsx from "clsx";
-import {buttonVariants} from "@/components/common/ui/button";
+import * as React from "react";
 import useApiUsers from "@/_actions/users";
 import {toast} from "react-hot-toast";
-import {catchError} from "@/lib/helpers";
-import {IUsers} from "@/lib/validation/users";
+import {catchError, hasActivePermission} from "@/lib/helpers";
+import {IDetailUser} from "@/lib/validation/users";
 import {ShellAction} from "@/components/common/shell-back";
+import {InfoCard} from "@/components/admin/users/user-card/info-card";
+import {GroupCard} from "@/components/admin/users/user-card/group-card"
+import {useAuth} from "@/lib/hooks/use-auth";
+import {RegisterPlatformsCard} from "@/components/admin/users/user-card/register-platform-card";
+import {usePlatform} from "@/lib/hooks/use-platform";
+import {useMounted} from "@/lib/hooks/use-mounted";
 
-export default function UserIdPage() {
-    const {id} = useParams();
+interface IParams extends React.PropsWithChildren {
+    params: {
+        id: number
+    }
+}
+
+export default function UserIdPage({params}: IParams) {
     const [isPending, startTransition] = React.useTransition();
-    const [userEdit, setUserEdit] = React.useState<IUsers>()
+    const [userEdit, setUserEdit] = React.useState<IDetailUser | null>(null)
     const {getUser} = useApiUsers();
-    const [groupId, setGroupId] = React.useState<string>("group1")
-    React.useEffect(() => {
+    const {profile} = useAuth()
+    const [showCreateBtn, setShowCreateBtn] = React.useState<boolean>(false)
+    const [trigger, setTrigger] = React.useState<boolean>(false)
+     const mounted = useMounted()
+
+    const fetchData = () => {
         startTransition(() => {
-            toast.promise((getUser(id)),
+            toast.promise((getUser(Number(params.id))),
                 {
                     loading: "Loading...",
-                    success: ({user}: any) => {
-                        setUserEdit(user);
+                    success: (data) => {
+                        setUserEdit(data);
                         return "Get detail user successfully."
                     },
                     error: (err: unknown) => catchError(err),
@@ -35,150 +44,60 @@ export default function UserIdPage() {
             )
 
         })
-    }, [id]);
-    const {
-        token: {colorTextBase},
-    } = theme.useToken();
-
-    const PlatformUser = () => {
-        return (
-            <>
-                <div className="grid grid-cols-2 gap-6">
-                    {platform.map((item, index) => (
-
-                        <Card key={index}
-                              className="my-5"
-                              title={<div className={"flex items-stretch  gap-x-4"}>
-                                  <div className="w-4 h-4 mr-2">
-                                      {item.icon}
-                                  </div>
-                                  <span>{item.name}</span>
-                              </div>}
-                        >
-                            <div>
-                                <div>
-                                    General:
-                                    .....
-                                </div>
-                                <div className="my-3">
-                                    <Button type="primary" style={{backgroundColor: colorTextBase}}>Watch
-                                        setting</Button>
-                                </div>
-                            </div>
-                        </Card>
-
-                    ))}
-                </div>
-            </>
-        )
     }
 
-    const UserInfo = () => {
-        return (
-            <>
-                {userEdit && (
+    React.useEffect(() => {
+        if (trigger) fetchData();
+        if(Number(params.id) !== profile?.user?.id) fetchData();
+    }, [params.id, trigger,profile]);
 
-                    <div className="max-w-xs">
-                        <div className="py-3">
-                            <div className="p-2">
-                                <h3 className="text-center text-xl text-gray-900 font-medium leading-8">{userEdit?.fullName ||'NAN'}</h3>
-                                <div className="text-center text-gray-400 text-xs font-semibold">
-                                    <p>{userEdit?.name ||'NAN'}</p>
-                                </div>
-                                <table className="text-xs my-3">
-                                    <tbody>
-                                    <tr>
-                                        <td className="px-2 py-2 text-gray-500 font-semibold">Address</td>
-                                        <td className="px-2 py-2">{userEdit.address || "NAN"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-2 py-2 text-gray-500 font-semibold">Phone</td>
-                                        <td className="px-2 py-2">{userEdit.phoneNumber || 'NAN'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-2 py-2 text-gray-500 font-semibold">Email</td>
-                                        <td className="px-2 py-2">{userEdit.email || "NAN"}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+    React.useEffect(() => {
+        if (profile && params.id) {
+            const hasPer = hasActivePermission(profile.permissions, 'tạo nhóm');
+            if((Number(params.id) === profile.user.id) && hasPer){
+                setShowCreateBtn(true)
+            }else{
+                setShowCreateBtn(false)
+            }
+        }
+    }, [params.id, profile])
 
-                                <div className="text-center">
-                                    <Button type="dashed">
-                                        <Link href={`/admin/users/${id}/edit`} className="flex items-center">
-                                            <Pencil className='w-4 h-4 mr-2 '/>
-                                            <span>Edit profile</span>
-                                        </Link>
-                                    </Button>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </>
-        )
-    }
-    const UserGroup = () => {
-        return (
-            <>
-                <small>Just enable when user role is admin</small>
-                <div>
-                    <Card>
-                        <small>example group 1</small>
-                        <div>
-                           <p>
-                               having 25 user
-                           </p>
-                            <div>
-                                <Button type="link" >
-                                  <Link href={`/admin/users/${id}/${groupId}`}>
-                                      Go to detail
-                                  </Link>
-                                </Button>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            </>
-        )
-    }
+    React.useEffect(() => {
+        if (Number(params.id) === profile?.user?.id) setUserEdit(profile)
+    }, [params.id, profile]);
+    {!mounted  && <>Loading</>}
 
     return (
-        <>
+        <React.Suspense fallback={<>Loading...</>}>
             <Space className={"flex items-center justify-between"}>
-                <PageHeader title="Users" desc="watch your user "/>
-                <ShellAction href="/admin/users" actionName="Back" />
+                <PageHeader title="Users" desc="watch user "/>
+                <ShellAction href="/admin/users" actionName="Back"/>
             </Space>
-            <div className="my-6 content">
-                <Card title="Infomation">
-                    <UserInfo/>
-                </Card>
-                <Collapse
-                    defaultActiveKey={['1']}
-                    bordered={false}
-                    expandIcon={({isActive}) => (
-                        <>
-                            {!isActive ? <ChevronRight/> : <ChevronDown/>}
-                        </>
-                    )}
-                    items={[
-                        {
-                            key: '1',
-                            label: "User platform",
-                            children: <PlatformUser/>
-                        },
-                        {
-                            key: '2',
-                            label: "User Group",
-                            children: <UserGroup/>
-                        }
-                    ]}
-                />
+            <div className="my-6 content space-y-3">
+
+                    <React.Suspense fallback={<>Loading.....</>}>
+                        {userEdit && (
+                            <div className="grid sm:grid-cols-2 md:grid-cols-1 gap-3">
+                            <div>
+                                    <InfoCard data={userEdit}/>
+                            </div>
+                            <div>
+                                <GroupCard data={userEdit} params={params} showCreateBtn={showCreateBtn}
+                                           setTrigger={setTrigger}/>
+                            </div>
+                            <div>
+                                <RegisterPlatformsCard data={userEdit.platforms}
+                                           setTrigger={setTrigger}
+                                           showCreateBtn={showCreateBtn}
+                                           user_has_pl_id={userEdit.user_has_pl_id}
+                                />
+                            </div>
+                        </div>
+                        )}
+                    </React.Suspense>
 
             </div>
-        </>
+        </React.Suspense>
     )
 }
-
 

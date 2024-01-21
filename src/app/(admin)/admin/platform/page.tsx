@@ -3,35 +3,26 @@
 import {PageHeader} from "@/components/common/page-header";
 import {PLatformTableShell} from "@/components/shells/platform-shell";
 import React from 'react';
-import useApiPlatform from "@/_actions/platforms"
+import {Card} from "antd";
+import {LiveStreamTypeShell} from "@/components/shells/live-stream-type-shell";
+import {usePlatform} from "@/lib/hooks/use-platform";
 
 export default function Platform() {
-    const [pending, startTransition] = React.useTransition();
-    const {getAll} = useApiPlatform()
-    const [data, setData] = React.useState([])
-
-    React.useEffect(() => {
-        startTransition(() => {
-            const fetchData = async () => {
-                try {
-                    const {data} = await getAll();
-                    console.log('data getAll', data)
-                    setData(data);
-                } catch (error) {
-                    console.error('Error in fetching roles:', error);
-                }
-            };
-            fetchData();
-        });
-    },[]);
-
-
+    const {platforms, liveStreamTypeData, setTrigger} = usePlatform()
+    console.log("platforms",platforms)
 
     return (
         <>
-            <PageHeader title="Platforms" desc="your list platform is here"/>
-            <div className="my-6">
-                <PLatformTableShell data={data} pageCount={1}/>
+
+            <PageHeader title="Platforms & livestream types"
+                        desc="setting platforms and livestream types"/>
+            <div className="my-6 space-y-6">
+                <Card title="Platform">
+                    <PLatformTableShell data={platforms} pageCount={1} setTrigger={setTrigger}/>
+                </Card>
+                <Card title="Livestream types">
+                    <LiveStreamTypeShell data={liveStreamTypeData} setTrigger={setTrigger}/>
+                </Card>
             </div>
 
         </>

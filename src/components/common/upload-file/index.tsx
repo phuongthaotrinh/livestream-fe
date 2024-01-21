@@ -22,12 +22,6 @@ export function UploadFile({onChange, onRemove, value, max, hierarchy}: ImageUpl
         onChange(result?.info.secure_url);
     };
 
-    const valueLength = value;
-    const firstImage = value?.at(0);
-    const allImageWithoutFirst: string[] = value?.slice(1);
-
-
-
     return (
         <>
             <CldUploadWidget onUpload={onUpload} uploadPreset="c8zrj0fl">
