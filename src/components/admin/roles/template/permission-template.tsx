@@ -18,7 +18,7 @@ import {catchError} from "@/lib/helpers";
 
 export function PermissionTemplate () {
     const router = useRouter();
-    const {getAllPermisstion, createPermisstion} = useApiRoles();
+    const {getAllPermisstion, createPermisstion, deletePer} = useApiRoles();
     const [open, setOpen] = React.useState<boolean>(false);
     const [form] = Form.useForm();
     const [permissions, setPermissions]= React.useState<any[]>([]);
@@ -37,8 +37,27 @@ export function PermissionTemplate () {
     },[trigger, mount])
 
 
+
     const deleteMany = () => {
-        toast.error(`feature not enable, delete ${selectedRowIds.length} item`)
+        toast.promise(
+            Promise.all(
+                selectedRowIds.map((id) =>
+                    deletePer( id  )
+                )
+            ),
+            {
+                loading: "Deleting...",
+                success: () => {
+                    setSelectedRowIds([]);
+                    setTrigger(true)
+                    return "Products deleted successfully."
+                },
+                error: (err: unknown) => {
+                    setSelectedRowIds([])
+                    return catchError(err)
+                },
+            }
+        )
     }
 
 
@@ -105,7 +124,16 @@ export function PermissionTemplate () {
                                     title="Delete the task"
                                     description="Are you sure to delete this task?"
                                     onConfirm={() => {
-                                        toast.error(`feature not enable : ${row.original.id}`)
+                                        startTransition(() => {
+                                            toast.promise((deletePer((row.original.id))),{
+                                                loading: "Loading....",
+                                                success:(data:any) => {
+                                                    setTrigger(true)
+                                                    return "Success"
+                                                },
+                                                error:(err:any) => catchError(err)
+                                            })
+                                        })
                                     }}
                                     okText="Yes"
                                     cancelText="No"
@@ -133,6 +161,7 @@ export function PermissionTemplate () {
                 success:() => {
                     setTrigger(true);
                     setOpen(false);
+                    form.resetFields();
                     return "create success"
                 }
             })

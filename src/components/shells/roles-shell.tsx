@@ -201,7 +201,6 @@ export function RolesTableShell({
                     title: "name",
                 },
             ]}
-            newRowLink={undefined}
             deleteRowsAction={() => void deleteSelectedRows()}
             showToolbar={true}
         />

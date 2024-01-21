@@ -19,16 +19,20 @@ interface IUserForm {
     showPassw: boolean,
     editMail?: boolean,
     showRole?: boolean,
-    isPending: boolean
+    isPending: boolean,
+    isAdminMode?:boolean
 }
 
-export function UserForm({onFinish, form, handleReset, setImages, images, rule, showPassw, editMail, showRole, isPending}: IUserForm) {
+export function UserForm({onFinish, form, handleReset, setImages, images, rule, showPassw, editMail, showRole, isPending, isAdminMode=false}: IUserForm) {
     const [roles, setRoles] = React.useState<IRoles[]>([]);
     const [openModal, setOpenModal] = React.useState<boolean>(false);
     const {getRoles} = useApiRoles()
     const [domLoaded, setDomLoaded] = React.useState(false);
     const isAdmin = usePathname()?.includes('admin');
     const isAdminEdit = usePathname()?.includes('edit');
+
+
+
 
     React.useEffect(() => {
         (async () => {
@@ -155,16 +159,16 @@ export function UserForm({onFinish, form, handleReset, setImages, images, rule, 
                     <Card title="Password">
                         {showPassw &&
                             <Form.Item name="password" label="Password" className="custom_ant_label" rules={[rule]}
-                                       required={isAdmin ? false : true}>
+                                       required={isAdmin}>
                                 <Input.Password placeholder="input password"/>
                             </Form.Item>}
 
-
-                        <div className="md:w-1/2 space-y-4 cursor-pointer" onClick={() => setOpenModal(true)}>
+                        {isAdmin && <div className="md:w-1/2 space-y-4 cursor-pointer" onClick={() => setOpenModal(true)}>
                             <div className=" text-[#103fe0] flex items-center gap-4 mt-2">
                                 <small>Change Password</small>
                             </div>
-                        </div>
+                        </div>}
+
                         <Modal okType="dashed" open={openModal} onOk={onClose} onCancel={onClose}
                                title="Change password" confirmLoading={isPending}>
                             <PasswordVerifyForm rule={[rule]}/>

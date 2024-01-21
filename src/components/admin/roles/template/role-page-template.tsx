@@ -101,8 +101,6 @@ export function RolesPageTemplate() {
                         </button>
 
                     </div>
-
-
                     <CollectionCreateForm
                         pending={pending}
                         form={form}

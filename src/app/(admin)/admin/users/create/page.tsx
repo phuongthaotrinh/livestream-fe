@@ -69,6 +69,7 @@ export default function UserCreatePage() {
                 <UserForm onFinish={onFinish} form={form} handleReset={handleReset} setImages={setImages}
                           images={images} rule={rule}
                           showPassw={true} editMail={true} isPending={isPending} showRole={false}
+                            isAdminMode={true}
                 />
             </div>
         </>
