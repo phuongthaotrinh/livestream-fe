@@ -1,7 +1,5 @@
 'use client';
 
-
-
 import * as React from "react";
 import {PageHeader} from "@/components/common/page-header";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -12,10 +10,10 @@ import {catchError, toSentenceCase} from "@/lib/helpers";
 import {Form, Input, Space, InputNumber,Select} from "antd"
 import {Button} from "@/components/common/ui/button";
 import {useAuth} from "@/lib/hooks/use-auth";
-import {usePlatform} from "@/lib/hooks/use-platform";
 import { Loader2 } from "lucide-react"
 import FormSkeleton from "@/components/common/skeleton/form-skeleton";
-import {ShellAction} from "@/components/common/shell-back"
+import {ShellAction} from "@/components/common/shell-back";
+
 const groupFied = (values:any) => {
     const field_data = [];
 
@@ -30,11 +28,6 @@ const groupFied = (values:any) => {
 }
 
 
-interface IParams{
-    params: {
-        form_id: number
-    }
-}
 const FormItemRow: React.FC<any> = ({
 
                                         dataIndex,
@@ -134,7 +127,7 @@ export default function FSubmissionForm({params}:{params:{form_id:number}}) {
             })
         })
     }
-console.log('data__data', data)
+
     return (
         <>
                 <PageHeader title="create new submission " desc="New submission"/>
@@ -147,14 +140,14 @@ console.log('data__data', data)
                 <Form form={form} onFinish={onFinish} layout="vertical" className="my-3">
                     <div className="space-y-5">
                         {fields && fields?.map((item:any, index:any) => (
-                            <FormItemRow key={index} name={`field_${item.field_name}`} inputType={item.field_data}/>
+                            <FormItemRow key={index} name={`field_${item.field_name}`}  inputType={item.field_data}/>
                         ))}
                         <Form.Item label="Platform" name="platform_ids">
                             <Select
                                 mode="multiple"
-                                size="small"
+                                size="middle"
                                 placeholder="Please select platform to show"
-                                style={{ width: '100%' }}
+                                style={{ width: '100%'}}
                                 options={profile?.platforms?.map((item:any,index:number) => {
                                     return {
                                         key:index,
@@ -172,7 +165,7 @@ console.log('data__data', data)
                                             Please wait</>
                                     ): <p>Submit</p>}
                                 </Button>
-                                <Button disabled={isPending}  type="button" variant="outline">
+                                <Button disabled={isPending} onClick={() => form.resetFields()} type="button" variant="outline">
                                     {isPending ? (
                                         <>   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                             Please wait</>

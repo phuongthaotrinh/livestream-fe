@@ -16,7 +16,6 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/common/ui/dropdown-menu"
-import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 import {fallbackImg} from "@/lib/constants/fallbackImg";
 import useApiUsers from "@/_actions/users"
@@ -25,21 +24,29 @@ import {Checkbox} from "@/components/common/ui/checkbox"
 import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
 import {usePathname} from "next/navigation";
 
-interface ProductsTableShellProps {
-    data: any[]
-    pageCount: number
-}
-
-export function UserTableShell({
-                                   data,
-                                   pageCount,
-
-                               }: ProductsTableShellProps) {
+export function UserTableShell() {
+    const [users, setUsers] = React.useState([]);
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
-    const {deleteUser} = useApiUsers();
+    const {deleteUser, createUser,getUsers} = useApiUsers();
     const {profile} = useAuth();
     const pathname = usePathname();
+
+    function fetch () {
+        (async () => {
+            try {
+                const {data} = await getUsers();
+                setUsers(data);
+            } catch (error) {
+                console.error('Error in fetching roles:', error);
+            }
+        })()
+    }
+    React.useEffect(() => {
+        startTransition(() => {
+            fetch()
+        });
+    }, []);
 
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
@@ -55,7 +62,7 @@ export function UserTableShell({
                         onCheckedChange={(value) => {
                             table.toggleAllPageRowsSelected(!!value);
                             setSelectedRowIds((prev) =>
-                                prev.length === data.length ? [] : data.map((row) => row.id)
+                                prev.length === users.length ? [] : users.map((row:any) => row.id)
                             )
                         }}
                         aria-label="Select all"
@@ -219,46 +226,51 @@ export function UserTableShell({
                 ),
             },
         ],
-        [data, isPending]
+        [users]
     )
 
     function deleteSelectedRows() {
+        const deletePromises = selectedRowIds.map((id) =>
+            deleteUser({ id })
+        );
         toast.promise(
-            Promise.all(
-                selectedRowIds.map((id) =>
-                    deleteUser({
-                        id,
-                    })
-                )
-            ),
+            Promise.all(deletePromises),
             {
                 loading: "Deleting...",
                 success: () => {
-                    setSelectedRowIds([])
-                    return "Products deleted successfully."
+                    setSelectedRowIds([]);
+                    startTransition(() => {
+                        fetch();
+                    });
+                    return "Users deleted successfully.";
                 },
-                error: (err: unknown) => {
-                    setSelectedRowIds([])
-                    return catchError(err)
+                error: (err) => {
+                    setSelectedRowIds([]);
+                    startTransition(() => {fetch(); });
+                    return catchError(err);
                 },
             }
-        )
+        );
     }
 
     return (
-        <DataTableRaw
-             showToolbar={true}
-            columns={columns}
-            data={data}
-             nameExport="users"
-            searchableColumns={[
-                {
-                    id: "name",
-                    title: "name",
-                },
-            ]}
-            newRowLink={`${pathname}/create`}
-            deleteRowsAction={() => void deleteSelectedRows()}
-        />
+        <>
+            <DataTableRaw
+                columns={columns}
+                data={users}
+                nameExport="users"
+                searchableColumns={[
+                    {
+                        id: "name",
+                        title: "name",
+                    },
+                ]}
+                newRowLink={`${pathname}/create`}
+                deleteRowsAction={() => void deleteSelectedRows()}
+                revalidAction={() => void fetch()}
+                createDataAction={createUser}
+            />
+
+        </>
     )
 }

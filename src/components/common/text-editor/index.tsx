@@ -1,5 +1,5 @@
 import React, {useMemo, useCallback, lazy, Suspense} from "react";
-const ImageUploader = lazy(() => import('quill-image-uploader'));
+import  ImageUploader from "quill-image-uploader"
 import ReactQuill, {Quill} from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 import 'quill-image-uploader/dist/quill.imageUploader.min.css';

@@ -50,13 +50,10 @@ export default function FormSubmissions() {
 
     return (
         <>
-            <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
+            <div className="flex items-center justify-between w-full mb-7">
                 <PageHeader title="Forms submissions" desc={`all submissions form`}/>
-                <div className="flex justify-end w-full">
-                    <ShellAction type="action" actionName="Back" actionVoid={() => router.back()}/>
-                </div>
+                <ShellAction type="action" actionName="Back" actionVoid={() => router.back()}/>
             </div>
-
           <RegisterFormShell data={data} setTrigger={setTrigger} isClientMode={false} />
 
 

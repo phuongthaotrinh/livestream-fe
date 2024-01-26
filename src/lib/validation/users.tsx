@@ -83,5 +83,6 @@ export interface IDetailUser extends IUsers{
     permissions: any,
     groups:any[],
     platforms:any[],
-    user_has_pl_id:any[]
+    user_has_pl_id:any[],
+    permissionEnable:any[]
 }

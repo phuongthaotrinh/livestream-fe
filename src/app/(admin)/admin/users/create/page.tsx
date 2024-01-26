@@ -61,9 +61,9 @@ export default function UserCreatePage() {
 
     return (
         <>
-            <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
-                <PageHeader title="Create" desc="create new users"/>
-                <ShellAction actionName="Back" href="/admin/users" type="link"/>
+            <div className="flex items-center justify-between w-full mb-7">
+                <PageHeader title="Users" desc="watch user "/>
+                <ShellAction href="/admin/users" actionName="Back"/>
             </div>
             <div className="my-6 space-y-6">
                 <UserForm onFinish={onFinish} form={form} handleReset={handleReset} setImages={setImages}

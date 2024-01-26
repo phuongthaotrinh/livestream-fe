@@ -8,6 +8,7 @@ import useApiRoles from "@/_actions/roles";
 import {IRoles} from "@/lib/validation/roles";
 import {usePathname} from "next/navigation";
 import {PasswordVerifyForm} from "@/components/form/password-verify-form";
+import {LoadingSpin} from "@/components/common/loading-spin";
 
 interface IUserForm {
     onFinish: (value: IUsers) => void,
@@ -27,12 +28,8 @@ export function UserForm({onFinish, form, handleReset, setImages, images, rule, 
     const [roles, setRoles] = React.useState<IRoles[]>([]);
     const [openModal, setOpenModal] = React.useState<boolean>(false);
     const {getRoles} = useApiRoles()
-    const [domLoaded, setDomLoaded] = React.useState(false);
     const isAdmin = usePathname()?.includes('admin');
-    const isAdminEdit = usePathname()?.includes('edit');
-
-
-
+    const id = React.useId();
 
     React.useEffect(() => {
         (async () => {
@@ -41,18 +38,13 @@ export function UserForm({onFinish, form, handleReset, setImages, images, rule, 
         })()
     }, []);
 
-    React.useEffect(() => {
-        setDomLoaded(true);
-    }, []);
-
-
     const onClose = () => {
         setOpenModal(false)
     }
-    const id = React.useId()
+
     return (
         <>
-            {domLoaded && (
+
                 <Form name={`user_form.${id}`} layout="vertical" onFinish={onFinish} form={form} className="space-y-6">
                     <Space align="end">
                         <Form.Item>
@@ -65,93 +57,99 @@ export function UserForm({onFinish, form, handleReset, setImages, images, rule, 
                         </Form.Item>
                     </Space>
                     <Card title="Infomation">
-                        <div className="mb-3">
-                            <Form.Item name="id" hidden>
-                                <Input/>
-                            </Form.Item>
-                            <Form.Item
-                                name="images"
-                                label="Images"
-                                className="custom_ant_label"
-                            >
-                                <UploadFile
-                                    max={1}
-                                    hierarchy={false}
-                                    onRemove={(data: any) => {
-                                        setImages(images.filter((current: any) => current !== data))
-                                    }}
-                                    onChange={(data: any) => {
-                                        //@ts-ignore
-                                        setImages([...images, data])
-                                    }}
-                                    value={images}
-                                />
-                            </Form.Item>
-                            <div className="flex items-center gap-3">
-                                {images && images.map((item: any, index: any) => (
-                                    <div
-                                        className=" relative w-[150px] h-[150px] rounded-md overflow-hidden cursor-pointer"
-                                        key={index}>
-                                        <div className="z-10 absolute top-2 right-2">
-                                            <Button
-                                                htmlType="button"
-                                                onClick={() => {
-                                                    setImages(images.filter((current: any) => current !== item))
-                                                }}
-                                            >
-                                                X
-                                            </Button>
-                                        </div>
-                                        <img className="object-cover" alt="Image" src={item}/>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <Row gutter={[8, 8]}>
-                            <Col span={12}>
-                                <Form.Item name="name" label="display name" className="custom_ant_label" rules={[rule]}
-                                           required>
-                                    <Input placeholder="Doraemon ep 1"/>
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item name="fullName" label="Full name" className="custom_ant_label" rules={[rule]}
-                                           required>
-                                    <Input placeholder="Doraemon ep 1"/>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row gutter={[8, 8]}>
-                            <Col span={12}>
-                                <Form.Item name="email" label="Email" className="custom_ant_label" rules={[rule]}
-                                           required>
-                                    <Input disabled={!editMail} placeholder="Doraemon ep 1"/>
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item name="address" label="address" className="custom_ant_label" rules={[rule]}
-                                >
-                                    <Input placeholder="Doraemon ep 1"/>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Form.Item name="phoneNumber" label="phoneNumber" className="custom_ant_label" rules={[rule]}
-                        >
-                            <Input placeholder="phoneNumber"/>
-                        </Form.Item>
-
-                        {showRole && (
+                        {isPending ? (
+                            <LoadingSpin />
+                        ):(
                             <>
-                                <Form.Item name="role" label="role" className="custom_ant_label" rules={[rule]}>
-                                    <Checkbox.Group name="role">
-                                        {roles && roles.map((item, index) => (
-                                            <Checkbox value={item?.id} key={index}>{item?.name}</Checkbox>
+                                <div className="mb-3">
+                                    <Form.Item name="id" hidden>
+                                        <Input/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="images"
+                                        label="Images"
+                                        className="custom_ant_label"
+                                    >
+                                        <UploadFile
+                                            max={1}
+                                            hierarchy={false}
+                                            onRemove={(data: any) => {
+                                                setImages(images.filter((current: any) => current !== data))
+                                            }}
+                                            onChange={(data: any) => {
+                                                //@ts-ignore
+                                                setImages([...images, data])
+                                            }}
+                                            value={images}
+                                        />
+                                    </Form.Item>
+                                    <div className="flex items-center gap-3">
+                                        {images && images.map((item: any, index: any) => (
+                                            <div
+                                                className=" relative w-[150px] h-[150px] rounded-md overflow-hidden cursor-pointer"
+                                                key={index}>
+                                                <div className="z-10 absolute top-2 right-2">
+                                                    <Button
+                                                        htmlType="button"
+                                                        onClick={() => {
+                                                            setImages(images.filter((current: any) => current !== item))
+                                                        }}
+                                                    >
+                                                        X
+                                                    </Button>
+                                                </div>
+                                                <img className="object-cover" alt="Image" src={item}/>
+                                            </div>
                                         ))}
-                                    </Checkbox.Group>
+                                    </div>
+                                </div>
+
+                                <Row gutter={[8, 8]}>
+                                    <Col span={12}>
+                                        <Form.Item name="name" label="display name" className="custom_ant_label" rules={[rule]}
+                                                   required>
+                                            <Input placeholder="Doraemon ep 1"/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item name="fullName" label="Full name" className="custom_ant_label" rules={[rule]}
+                                                   required>
+                                            <Input placeholder="Doraemon ep 1"/>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row gutter={[8, 8]}>
+                                    <Col span={12}>
+                                        <Form.Item name="email" label="Email" className="custom_ant_label" rules={[rule]}
+                                                   required>
+                                            <Input disabled={!editMail} placeholder="Doraemon ep 1"/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item name="address" label="address" className="custom_ant_label" rules={[rule]}
+                                        >
+                                            <Input placeholder="Doraemon ep 1"/>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+
+                                <Form.Item name="phoneNumber" label="phoneNumber" className="custom_ant_label" rules={[rule]}
+                                >
+                                    <Input placeholder="phoneNumber"/>
                                 </Form.Item>
 
+                                {showRole && (
+                                    <>
+                                        <Form.Item name="role" label="role" className="custom_ant_label" rules={[rule]}>
+                                            <Checkbox.Group name="role">
+                                                {roles && roles.map((item, index) => (
+                                                    <Checkbox value={item?.id} key={index}>{item?.name}</Checkbox>
+                                                ))}
+                                            </Checkbox.Group>
+                                        </Form.Item>
+
+                                    </>
+                                )}
                             </>
                         )}
 
@@ -176,7 +174,7 @@ export function UserForm({onFinish, form, handleReset, setImages, images, rule, 
                     </Card>
 
                 </Form>
-            )}
+
         </>
     )
 }

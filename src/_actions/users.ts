@@ -24,7 +24,11 @@ const apiUrl = {
     //other:
     roleOfUser: 'role-per/get-role-belong-to-user',
     permissionOfUser: 'role-per/get-per-belong-to-role',
-    yourGroup: 'additional/get-group'
+    yourGroup: 'additional/get-group',
+
+    //permission
+    addUserPermission:'role-per/store-user-permission',
+    getAllPermissionBelongToUser:'role-per/get-all-permission-belong-to-user'
 }
 
 
@@ -41,7 +45,6 @@ const useApiUsers = () => {
         }
     };
     const deleteUser = async (payload: any) => {
-        console.log(payload)
         try {
             const response = await axiosInstance.delete(`${apiUrl.delete}/${payload.id}`);
             return response.data;
@@ -63,37 +66,38 @@ const useApiUsers = () => {
 
     const getUser = async (payload: any): Promise<IDetailUser> => {
         try {
-            const [{data: infoResponse}, {data: roleResponse}] = await Promise.all([
+            const [{data: infoResponse}, {data: roleResponse},{data:permissionEnable}] = await Promise.all([
                 axiosInstance.get(`${apiUrl.getOne}/${payload}`),
                 axiosInstance.get(`${apiUrl.roleOfUser}/${payload}`),
+                axiosInstance.get(`${apiUrl.getAllPermissionBelongToUser}/${payload}`)
             ]);
             let permissions: any[] = [];
             const groups: any[] = await yourGroups(Number(payload))
             let platforms:any = await getRegisteredPlatformByUserId(payload);
+
             if (roleResponse.data) {
                 const results = await Promise.all(roleResponse.data.map(async (item: any) => {
                     if (item?.status === "on") {
                         const response = await axiosInstance.get(`${apiUrl.permissionOfUser}/${item?.role_id}`);
                         return response.data.data;
-                    }
-                    return null;
+                    }else  return [];
                 }));
-                const setResult = getUniqueRecordsByField(results, 'permission_id',"multi")
+                const setResult = getUniqueRecordsByField(results, 'permission_id',"multi");
+
                 permissions = [...setResult]
             }
 
             const data = {
-                user: infoResponse.user,
-                role: roleResponse.data,
+                user: infoResponse?.user,
+                role: roleResponse?.data?.filter((item:any) => item?.status === "on"),
                 permissions: permissions,
                 groups: groups,
                 platforms:platforms?.data as any[],
-                user_has_pl_id:platforms?.user_has_platform_id as any
+                user_has_pl_id:platforms?.user_has_platform_id as any,
+                permissionEnable:permissionEnable?.data?.filter((item:any) => item?.status === "on") as any[],
             } as IDetailUser
-
             return data;
         } catch (error) {
-            console.error('Error fetching data:', error);
             throw error;
         }
     };
@@ -186,6 +190,26 @@ const useApiUsers = () => {
         }
     };
 
+    //permission
+    const addUserPermission = async (body: any) => {
+        try {
+            const response = await axiosInstance.post(apiUrl.addUserPermission, body);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+
+    const getAllPermissionBelongToUser = async (user_id:number) => {
+        try {
+            const response = await axiosInstance.get(`${apiUrl.getAllPermissionBelongToUser}/${user_id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
     return {
         createUser,
         getUsers,
@@ -195,7 +219,9 @@ const useApiUsers = () => {
         getAllMemberInGroup,
         createUserToGroup,
         removeMemberToGroup,
-        userCanAddInGroupAndUserInGroup
+        userCanAddInGroupAndUserInGroup,
+        addUserPermission,
+        getAllPermissionBelongToUser
     };
 };
 

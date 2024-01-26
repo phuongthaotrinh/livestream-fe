@@ -6,9 +6,8 @@ import {PlusCircle} from "lucide-react"
 import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
 import {catchError, formatDate} from "@/lib/helpers";
-import {Modal, Tag} from "antd";
+import {Modal, Tag, Card} from "antd";
 import {Checkbox} from "@/components/common/ui/checkbox"
-import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
 import {ShellAction} from "@/components/common/shell-back";
 import {ILiveStreamType, IPlatform, livesStreamTypeSchema} from "@/lib/validation/live-stream-type";
@@ -17,17 +16,13 @@ import useApiPlatform from "@/_actions/platforms";
 import {PlatformForm} from "@/components/form/platform";
 import {usePathname} from "next/navigation";
 import  {toSentenceCase} from "@/lib/helpers"
-interface IPLatformTableShell {
-    data: IPlatform[]
-    pageCount: number,
-    setTrigger: React.Dispatch<React.SetStateAction<boolean>>
-}
+import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
+import {usePlatform} from "@/lib/hooks/use-platform";
 
-export function PLatformTableShell({
-                                       data,
-                                       pageCount,
-                                       setTrigger
-                                   }: IPLatformTableShell) {
+
+export function PLatformTableShell() {
+    const {platforms:data, setTrigger} = usePlatform()
+
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
     const [open, setOpen] = React.useState<boolean>(false);
@@ -83,10 +78,7 @@ export function PLatformTableShell({
                     const id = row.original.id as number;
                     return (
                         <div className="truncate ">
-                            <Link href={`${pathname}/${id}`}>
-
-                                {row.getValue("name")}
-                            </Link>
+                            {row.getValue("name")}
                         </div>
                     )
                 },
@@ -145,25 +137,18 @@ export function PLatformTableShell({
 
         })
     }
-    const deleteSelectedRows = () => {
-        toast.error('feature not enable');
-        setSelectedRowIds([])
-    }
+
     return (
-        <>
-            <div className="flex flex-end  absolute right-[13rem] top-[5.5rem]">
-                <ShellAction actionName="Create" icon={PlusCircle} type="action" actionVoid={() => setOpen(true)}/>
-            </div>
+        <Card>
             <Modal title="Create" footer={null} open={open} onCancel={() => {
                 form.resetFields();
                 setOpen(false)
             }}>
                 <PlatformForm form={form} rule={rule} onFinish={onFinish} isPending={isPending}/>
             </Modal>
-            <DataTable
+            <DataTableRaw
                 columns={columns}
                 data={data}
-                pageCount={pageCount}
                 searchableColumns={[
                     {
                         id: "name",
@@ -171,8 +156,10 @@ export function PLatformTableShell({
                     },
                 ]}
                 newRowLink={undefined}
-                deleteRowsAction={() => void deleteSelectedRows()}
+
+                nameExport="Platform"
+                newRowAction={() => setOpen(true)}
             />
-        </>
+        </Card>
     )
 }

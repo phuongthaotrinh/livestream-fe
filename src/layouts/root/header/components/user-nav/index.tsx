@@ -44,8 +44,8 @@ export default function Index() {
                             <DropdownMenuTrigger asChild>
                                 <Avatar
                                     size="large"
-                                    src={profile?.user?.images ? profile?.user?.images : fallbackImg}
-                                    srcSet={profile?.user?.images ? profile?.user?.images : fallbackImg}
+                                    src={profile?.user?.images ? profile?.user?.images[0] : fallbackImg}
+                                    srcSet={profile?.user?.images ? profile?.user?.images[0] : fallbackImg}
                                 />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end" forceMount>

@@ -4,13 +4,13 @@ import * as React from "react"
 import Link from "next/link"
 import {type ColumnDef} from "@tanstack/react-table"
 import {toast} from "react-hot-toast";
-import {catchError, formatDate} from "@/lib/helpers";
+import {catchError} from "@/lib/helpers";
 import {Checkbox} from "antd"
-import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
-import {Trash, Edit, PlusCircle} from "lucide-react"
+import {Trash, Edit} from "lucide-react"
 import clsx from "clsx";
 import {buttonVariants} from "@/components/common/ui/button";
+import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
 
 interface IPLatformFiledsTableShell {
     data: any[]
@@ -192,10 +192,9 @@ export  function PlatformFiledsShell({
 
 
     return (
-        <DataTable
+        <DataTableRaw
             columns={columns}
             data={data}
-            pageCount={pageCount}
             searchableColumns={[
                 {
                     id: "name",
@@ -204,6 +203,7 @@ export  function PlatformFiledsShell({
             ]}
             newRowLink={undefined}
             deleteRowsAction={() => void deleteSelectedRows()}
+
         />
     )
 }

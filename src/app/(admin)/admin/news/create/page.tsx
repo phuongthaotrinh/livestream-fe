@@ -16,7 +16,9 @@ export default function NewsCreatePage() {
     const [images, setImages] = React.useState<any[]>([]);
     const [form, rule] = useValidation<INews>(newsSchema);
     const [formContent, setFormContent] = React.useState<string>("");
-    const [isPending, startTransition] = React.useTransition()
+    const [isPending, startTransition] = React.useTransition();
+    console.log("NewsCreatePage",images)
+
 
     const onFinish = (value: any) => {
         value.image_link = images;
@@ -42,11 +44,9 @@ export default function NewsCreatePage() {
 
     return (
         <>
-            <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
+            <div className="flex items-center justify-between w-full mb-7">
                 <PageHeader title="Create" desc="create new news"/>
-                <div className="flex justify-end">
-                    <ShellAction href="/admin/news" actionName="Back" type="link"/>
-                </div>
+                <ShellAction href="/admin/news" actionName="Back" type="link"/>
             </div>
             <div className="my-6">
                 <NewsForm onFinish={onFinish} form={form} setImages={setImages} images={images} rule={rule}
