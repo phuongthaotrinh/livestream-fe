@@ -1,6 +1,5 @@
 'use client';
 
-import {Space} from "antd"
 import {PageHeader} from "@/components/common/page-header";
 import * as React from "react";
 import useApiUsers from "@/_actions/users";
@@ -12,8 +11,9 @@ import {InfoCard} from "@/components/admin/users/user-card/info-card";
 import {GroupCard} from "@/components/admin/users/user-card/group-card"
 import {useAuth} from "@/lib/hooks/use-auth";
 import {RegisterPlatformsCard} from "@/components/admin/users/user-card/register-platform-card";
-import {usePlatform} from "@/lib/hooks/use-platform";
 import {useMounted} from "@/lib/hooks/use-mounted";
+import useApiRoles from "@/_actions/roles";
+import {PermissionAcceptCard} from "@/components/admin/users/user-card/permission-accept-card";
 
 interface IParams extends React.PropsWithChildren {
     params: {
@@ -29,7 +29,6 @@ export default function UserIdPage({params}: IParams) {
     const [showCreateBtn, setShowCreateBtn] = React.useState<boolean>(false)
     const [trigger, setTrigger] = React.useState<boolean>(false)
      const mounted = useMounted()
-
     const fetchData = () => {
         startTransition(() => {
             toast.promise((getUser(Number(params.id))),
@@ -48,7 +47,7 @@ export default function UserIdPage({params}: IParams) {
 
     React.useEffect(() => {
         if (trigger) fetchData();
-        if(Number(params.id) !== profile?.user?.id) fetchData();
+        if(params.id && profile?.user?.id) fetchData();
     }, [params.id, trigger,profile]);
 
     React.useEffect(() => {
@@ -62,36 +61,31 @@ export default function UserIdPage({params}: IParams) {
         }
     }, [params.id, profile])
 
-    React.useEffect(() => {
-        if (Number(params.id) === profile?.user?.id) setUserEdit(profile)
-    }, [params.id, profile]);
+
     {!mounted  && <>Loading</>}
 
     return (
         <React.Suspense fallback={<>Loading...</>}>
-            <Space className={"flex items-center justify-between"}>
+            <div className="flex items-center justify-between w-full my-5">
                 <PageHeader title="Users" desc="watch user "/>
                 <ShellAction href="/admin/users" actionName="Back"/>
-            </Space>
+            </div>
             <div className="my-6 content space-y-3">
 
                     <React.Suspense fallback={<>Loading.....</>}>
                         {userEdit && (
                             <div className="grid sm:grid-cols-2 md:grid-cols-1 gap-3">
-                            <div>
-                                    <InfoCard data={userEdit}/>
-                            </div>
-                            <div>
+
+                                <InfoCard data={userEdit}/>
+
                                 <GroupCard data={userEdit} params={params} showCreateBtn={showCreateBtn}
                                            setTrigger={setTrigger}/>
-                            </div>
-                            <div>
+
                                 <RegisterPlatformsCard data={userEdit.platforms}
                                            setTrigger={setTrigger}
                                            showCreateBtn={showCreateBtn}
                                            user_has_pl_id={userEdit.user_has_pl_id}
                                 />
-                            </div>
                         </div>
                         )}
                     </React.Suspense>

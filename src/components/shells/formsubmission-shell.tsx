@@ -3,7 +3,7 @@
 import * as React from "react";
 import useApiPlatform from "@/_actions/platforms";
 import {usePathname} from "next/navigation";
-import {BellIcon, PlusCircleIcon} from "lucide-react";
+import {BellIcon, PlusCircle, PlusCircleIcon} from "lucide-react";
 import {ShellAction} from "@/components/common/shell-back";
 import { Tabs , Card} from 'antd';
 import type { TabsProps } from 'antd';
@@ -99,32 +99,38 @@ export function FormsubmissionShell ({page_title, page_desc, isClientMode}:IForm
                       onChange={(activeKey) => setActiveKey(activeKey)}
                 />
             ):(
-                <section className="space-y-5 my-5">
-                    {data ? data.map((item, index) => (
-                        <Card key={index}  className="w-full" bodyStyle={{padding:"5px"}} >
-                            <div className=" flex items-center space-x-4 rounded-md border p-4">
-                                <BellIcon />
-                                <div className="flex-1 space-y-1">
-                                    <p className="text-sm font-medium leading-none">
-                                        {item.name}
-                                    </p>
+               <>
+                   <div className="flex gap-4">
+                       <ShellAction actionName="Tạo forms" flex="start" icon={PlusCircle} href={`${pathname}/create`} />
+                   </div>
+                   <section className="space-y-5 my-5">
+                       {data ? data.map((item, index) => (
+                           <Card key={index}  className="w-full" bodyStyle={{padding:"5px"}} >
+                               <div className=" flex items-center space-x-4 rounded-md border p-4">
+                                   <BellIcon />
+                                   <div className="flex-1 space-y-1">
+                                       <p className="text-sm font-medium leading-none">
+                                           {item.name}
+                                       </p>
 
-                                </div>
-                                <div className="max-w-[150px]">
-                                    <ShellAction  type="link" actionName="create submission" icon={PlusCircleIcon}
-                                                  href={{
-                                                      pathname: `${pathname}/${item.id}`,
-                                                      query: {type: JSON.stringify(item.live_type_id, null, 2)},
-                                                  }}
-                                    />
-                                </div>
+                                   </div>
+                                   <div className="max-w-[150px]">
+                                       <ShellAction  type="link" actionName="create submission" icon={PlusCircleIcon}
+                                                     href={{
+                                                         pathname: `${pathname}/${item.id}`,
+                                                         query: {type: JSON.stringify(item.live_type_id, null, 2)},
+                                                     }}
+                                       />
+                                   </div>
 
-                            </div>
-                        </Card>
-                    )) : (
-                        <></>
-                    )}
-                </section>
+                               </div>
+                           </Card>
+                       )) : (
+                           <></>
+                       )}
+                   </section>
+
+               </>
             )}
 
         </>

@@ -29,7 +29,7 @@ type IListMember = {
 }
 
 
-const ListMember = ({data, selectedRowIds, setSelectedRowIds, addMember, name, params,setTrigger,removeMember,isPreview}: IListMember) => {
+const ListMember = ({data, selectedRowIds, setSelectedRowIds, addMember, name,removeMember,isPreview}: IListMember) => {
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
         () => [
             {
@@ -125,39 +125,32 @@ const ListMember = ({data, selectedRowIds, setSelectedRowIds, addMember, name, p
 
     return (
         <div className="space-y-4">
-
-            {selectedRowIds && selectedRowIds.length > 0 && (
+            {name == "create" ? (
                 <>
-                    {name == "create" ? (
-                        <Button size="small" onClick={addMember} type="dashed" className="flex items-center">
-                            <PlusCircle className="w-4 h-4 mr-2"/>
-                            <span>Add</span>
-                        </Button>
-                    ) : (
-                       <>
-                           {!isPreview && (
-                               <Button size="small" onClick={removeMember} type="dashed"
-                                       className="flex items-center my-3">
-                                   <Trash className="w-4 h-4 mr-2"/>
-                                   <span>Remove</span>
-                               </Button>
-                           )}
-                       </>
-
-                    )}
-
+                    <DataTableRaw columns={columns} data={data}
+                                  searchableColumns={[
+                                      {
+                                          id:"name",
+                                          title:"name"
+                                      }
+                                  ]}
+                                  newRowAction={addMember}
+                    />
+                </>
+            ):(
+                <>
+                    {!isPreview && (
+                    <DataTableRaw columns={columns} data={data}
+                                  searchableColumns={[
+                                      {
+                                          id:"name",
+                                          title:"name"
+                                      }
+                                  ]}
+                                  deleteRowsAction={removeMember}
+                    />)}
                 </>
             )}
-
-            <div className="my-4"></div>
-            <DataTableRaw columns={columns} data={data} showToolbar={false}
-                          searchableColumns={[
-                              {
-                                  id:"name",
-                                  title:"name"
-                              }
-                          ]}
-            />
         </div>
     )
 };
@@ -194,7 +187,7 @@ export default function DetailGroupShell ({params,isPreview}:IParams) {
                     const listUser = findNonExistingRecords(userCanChoose, userInGroup)
                     setData(listUser);
                     setUsersInGroup(userInGroup)
-                    return "ccccc"
+                    return "Get data success"
                 }, error:(err) => catchError(err)
             })
         })
@@ -229,6 +222,7 @@ export default function DetailGroupShell ({params,isPreview}:IParams) {
                 error: (err: unknown) => {
                     setSelectedRowIds([]);
                     setOpen(false);
+                    setTrigger(true);
                     return catchError(err)
                 },
             }
@@ -261,17 +255,19 @@ export default function DetailGroupShell ({params,isPreview}:IParams) {
     }
     return (
         <>
-            <Space className={"flex items-center justify-between"}>
+            <Space className={"flex items-center justify-between my-7"}>
                 <PageHeader title="Your groups" desc="watch user "/>
                 <ShellAction type="action" actionVoid={() => router.back()} actionName="Back"/>
             </Space>
             <div className="space-y-4">
                 {!isPreview && (
-                    <section className="add_new_mem_section">
+                    <section className="add_new_mem_section relative">
+                       <div className="absolute top-[0.2rem] left-[35vw]">
                         <ShellAction icon={PlusCircle} type="action" actionVoid={() => setOpen(true)}
                                      actionName="Choose user"
                         />
-                        <Modal width="70vw" open={open}
+                    </div>
+                        <Modal open={open}
                                onCancel={() => {
                                    setOpen(false);
                                    setSelectedRowIds([]);

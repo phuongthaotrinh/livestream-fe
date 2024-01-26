@@ -19,7 +19,7 @@ export default function EditAccoutProfile() {
     const {profile, setTrigger} = useAuth();
     const {updateProfile, getUser} = useApiUsers();
 
-
+    console.log("profile",profile)
     const setFiedsFn = (data: IDetailUser | undefined) => {
         if (data) {
             form.setFieldsValue({
@@ -29,6 +29,7 @@ export default function EditAccoutProfile() {
                 }),
                 password: ''
             })
+            setImages(data?.user?.images)
         }
     }
     React.useEffect(() => {

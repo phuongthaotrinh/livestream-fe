@@ -57,30 +57,39 @@ export const dashboardConfig: NavbarConfig = {
         }
     ],
     adminNav: [
-        getItem('User', 'User', <UserRound className="w-4 h-4"/>, [
-            getItem(<Link href="/admin/users">List</Link>, 'User1'),
-        ]),
-        getItem('PLatform', 'PLatform', <Tv2 className="w-4 h-4"/>, [
-            getItem(<Link href="/admin/platform">List</Link>, 'PLatform1'),
+        getItem(
+            <Link href="/admin/users">Users</Link>,
+            'User',
+            <UserRound className="w-4 h-4"/>,
+        ),
+        getItem(
+            <Link href="/admin/platform">PLatforms</Link>,
+            'PLatform',
+            <Tv2 className="w-4 h-4"/>,
+        ),
+        getItem(
+            <Link href="/admin/news">News</Link>,
+            'News1',
+            <Newspaper className="w-4 h-4"/>,
+        ),
+        getItem(
+            <Link href="/admin/sliders">Sliders</Link>,
+            'sliders',
+            <GalleryHorizontalEnd className="w-4 h-4"/>,
+        ),
+        getItem(
+            <Link href="/admin/groups">Groups</Link>,
+            'groups_1',
+            <Group className="w-4 h-4"/>,
+        ),
+        getItem('Roles & Permissions', 'Roles&Permissions', <VenetianMask className="w-4 h-4"/>, [
+            getItem(<Link href="/admin/roles">Roles</Link>, 'Roles1'),
+            getItem(<Link href="/admin/roles/permission">Permissions</Link>, 'Permissions'),
         ]),
         getItem('Forms', 'Forms', <Tv2 className="w-4 h-4"/>, [
             getItem(<Link href="/admin/forms/submission-form">All submission forms</Link>, 'submission1'),
             getItem(<Link href="/admin/forms">Forms</Link>, 'forms1')
         ]),
-
-        getItem('News', 'News', <Newspaper className="w-4 h-4"/>, [
-            getItem(<Link href="/admin/news">List</Link>, 'News1'),
-        ]),
-        getItem('Roles', 'Roles', <VenetianMask className="w-4 h-4"/>, [
-            getItem(<Link href="/admin/roles">List</Link>, 'Roles1'),
-        ]),
-        getItem('Sliders', 'Sliders', <GalleryHorizontalEnd className="w-4 h-4"/>, [
-            getItem(<Link href="/admin/sliders">List</Link>, 'sliders_1'),
-        ]),
-        getItem('Groups', 'Groups', <Group className="w-4 h-4"/>, [
-            getItem(<Link href="/admin/groups">List</Link>, 'groups_1'),
-        ]),
-
     ],
 
 }

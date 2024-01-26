@@ -39,7 +39,6 @@ export default function AccountPage() {
                 </div>
             </section>,
         },
-
     ];
 
     return (
@@ -48,8 +47,8 @@ export default function AccountPage() {
             <div className="content my-5 mb-12 space-y-8">
                 <section className="flex items-center gap-6">
                     <Avatar size={64}
-                            src={profile?.user?.images ? profile?.user?.images : fallbackImg}
-                            srcSet={profile?.user?.images ? profile?.user?.images : fallbackImg}/>
+                            src={profile?.user?.images ? profile?.user?.images?.[0] : fallbackImg}
+                            srcSet={profile?.user?.images ? profile?.user?.images?.[0] : fallbackImg}/>
                     <div className="flex flex-col">
                         <span> {profile?.user?.name}</span>
                         <small> {profile?.user?.fullName}</small>

@@ -33,25 +33,27 @@ import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/types";
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    showToolbar: boolean,
     searchableColumns?: DataTableSearchableColumn<TData>[]
     filterableColumns?: DataTableFilterableColumn<TData>[],
     newRowLink?: string,
     deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>,
     newRowAction?: React.MouseEventHandler<HTMLButtonElement>,
-    nameExport?:string
+    nameExport?:string;
+    revalidAction?:() => void;
+    createDataAction?: (body: any) => Promise<any>
 }
 
 export function DataTableRaw<TData, TValue>({
                                                 columns,
                                                 data,
-                                                showToolbar=true,
                                                 searchableColumns,
                                                 filterableColumns = [],
                                                 newRowLink,
                                                 newRowAction,
                                                 deleteRowsAction,
-                                                nameExport
+                                                nameExport,
+                                                revalidAction,
+                                                createDataAction
                                             }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] =
@@ -93,6 +95,8 @@ export function DataTableRaw<TData, TValue>({
                               newRowAction={newRowAction}
                               data={data}
                               nameExport={nameExport}
+                              revalidAction={revalidAction}
+                              createDataAction={createDataAction}
 
             />
 

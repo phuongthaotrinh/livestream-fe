@@ -81,7 +81,6 @@ export function getUniqueRecordsByField(
 ): any[] {
     const uniqueRecordsMap = new Map<any, any>();
     const uniqueRecords: any[] = [];
-
     if(type == "multi"){
 
         input.forEach((recordsGroup: any[]) => {

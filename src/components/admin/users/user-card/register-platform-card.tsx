@@ -158,9 +158,6 @@ export  function RegisterPlatformsCard({setTrigger, data,showCreateBtn,user_has_
                                             const test =getUniqueById(draf)
                                             setPlatformsSelect(test)
                                         }}
-
-
-
                                     />
                                 </div>
                             </Card>
