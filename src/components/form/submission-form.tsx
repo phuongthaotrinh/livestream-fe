@@ -7,19 +7,23 @@ import useIsomorphicLayoutEffect from "@/lib/hooks/use-isomorphic-layout-effect"
 import useApiPlatform  from "@/_actions/platforms";
 import {toast} from "react-hot-toast"
 import {catchError, toSentenceCase} from "@/lib/helpers";
-import {Form, Input, Space, InputNumber,Select} from "antd"
+import {Form, Input, Space, InputNumber,Select,DatePicker} from "antd"
 import {Button} from "@/components/common/ui/button";
 import {useAuth} from "@/lib/hooks/use-auth";
 import { Loader2 } from "lucide-react"
 import FormSkeleton from "@/components/common/skeleton/form-skeleton";
 import {ShellAction} from "@/components/common/shell-back";
 
+
 const groupFied = (values:any) => {
     const field_data = [];
 
     for (const key in values) {
         if (values.hasOwnProperty(key)) {
-            if (key.includes("field")) {
+            if ( key !== "field_id" &&
+                key !== "form_field_id" &&
+                key !== "form_id" &&
+                key !== "user_id") {
                 field_data.push({ name: key.replace("field_", ""), value: values[key] });
             }
         }
@@ -41,24 +45,56 @@ const FormItemRow: React.FC<any> = ({
 
 
     const getInputType = () => {
-        if(inputType === "text") return <Input  placeholder={`Enter ${name}`}/>
-        if(inputType === "number") return <InputNumber placeholder={`Enter ${name}`} />
+        if(inputType === "text" ||inputType ===  "url" || inputType === "email") return <Input count={{ show: true,  max:255 }}
+                                               placeholder={`Enter ${name}`} required />
+        if(inputType === "number") return <InputNumber  min="0"
+                                                        style={{width:"100%"}}
+                                                        placeholder={`Enter ${name}`} required />
+        if(inputType === "password") return <Input.Password />
+        if(inputType === "date") return  <DatePicker />
     }
+    const getRule = () => {
+        let rule =[]
+        if(inputType === "email") {
+            rule = [
+                {
+                    type: 'email',
+                    message: 'The input is not valid E-mail!',
+                },
+                {
+                    required: true,
+                    message: 'Please input your E-mail!',
+                },
+            ]
+        }
+        else if (inputType === 'url') {
+            rule = [{ required: true }, { type: 'url', warningOnly: true }, { type: 'string', min: 6 }]
+        }
+        else {
+            rule=[
+                {
+                    required: true,
+                    message: `Please Input ${title}!`,
+                },
+            ]
+        }
+        return rule
+
+    }
+    const rules = getRule() as any;
+
     return (
         <div {...restProps}>
+
             <Form.Item
                 name={name}
                 style={{margin: 0}}
                 label={toSentenceCase(name)}
-                rules={[
-                    {
-                        required: true,
-                        message: `Please Input ${title}!`,
-                    },
-                ]}
+                rules={rules}
             >
                 {getInputType()}
             </Form.Item>
+
         </div>
     );
 };
@@ -89,8 +125,6 @@ export default function FSubmissionForm({params}:{params:{form_id:number}}) {
                 })),{
                     loading: 'loading...',
                     success :({data}) => {
-                        console.log('payload', data)
-                        //
                         if(data)  {
                             setData(data)
                         }
@@ -125,13 +159,15 @@ export default function FSubmissionForm({params}:{params:{form_id:number}}) {
                     return "create success"
                 }
             })
-        })
+        });
     }
 
     return (
         <>
+            <div className="flex items-center justify-between w-full mb-7">
                 <PageHeader title="create new submission " desc="New submission"/>
                 <ShellAction actionName="Backd" type="link" actionVoid={() => router.back()} />
+            </div>
             {isPending ? (
                 <>
                     <FormSkeleton />
@@ -139,9 +175,12 @@ export default function FSubmissionForm({params}:{params:{form_id:number}}) {
             ):(
                 <Form form={form} onFinish={onFinish} layout="vertical" className="my-3">
                     <div className="space-y-5">
-                        {fields && fields?.map((item:any, index:any) => (
-                            <FormItemRow key={index} name={`field_${item.field_name}`}  inputType={item.field_data}/>
-                        ))}
+                        {fields && fields?.map((item:any, index:any) => {
+                            const inputType  = item.field_data
+                            return (
+                                <FormItemRow key={index} name={item.field_name}  inputType={inputType} id={`field_${item.field_name}`}/>
+                            )
+                        })}
                         <Form.Item label="Platform" name="platform_ids">
                             <Select
                                 mode="multiple"

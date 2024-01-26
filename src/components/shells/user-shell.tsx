@@ -23,29 +23,35 @@ import {useAuth} from "@/lib/hooks/use-auth";
 import {Checkbox} from "@/components/common/ui/checkbox"
 import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
 import {usePathname} from "next/navigation";
-
+import useIsomorphicLayoutEffect from "@/lib/hooks/use-isomorphic-layout-effect"
 export function UserTableShell() {
     const [users, setUsers] = React.useState([]);
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
-    const {deleteUser, createUser,getUsers} = useApiUsers();
+    const {deleteUser, createUser,getUsers, blockUser,unblockUser} = useApiUsers();
+    const [trigger, setTrigger] = React.useState<boolean>(false);
+    const [trigger2, setTrigger2] = React.useState<boolean>(false)
+
     const {profile} = useAuth();
     const pathname = usePathname();
 
     function fetch () {
-        (async () => {
+        startTransition( async () => {
             try {
                 const {data} = await getUsers();
                 setUsers(data);
             } catch (error) {
                 console.error('Error in fetching roles:', error);
             }
-        })()
+
+        })
     }
     React.useEffect(() => {
-        startTransition(() => {
+        if(trigger || trigger2) fetch()
+    }, [trigger,trigger2]);
+
+    React.useEffect(() => {
             fetch()
-        });
     }, []);
 
     // Memoize the columns so they don't re-render on every render
@@ -219,6 +225,45 @@ export function UserTableShell() {
                                         Delete
                                         <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
                                     </DropdownMenuItem>
+                                    {row.original.block ? (
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                startTransition(() => {
+                                                    toast.promise((unblockUser(row.original.id)),
+                                                        {
+                                                            loading: "Loading...",
+                                                            success: () => {
+                                                                setTrigger(true)
+                                                                return "Save change successfully."
+                                                            },
+                                                            error: (err: unknown) => catchError(err),
+                                                        }
+                                                    )
+                                                })
+                                            }}
+                                        >
+                                          UnBlock
+                                        </DropdownMenuItem>
+                                    ):(
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                startTransition(() => {
+                                                    toast.promise((blockUser(row.original.id)),
+                                                        {
+                                                            loading: "Loading...",
+                                                            success: () => {
+                                                                setTrigger2(true)
+                                                                return "Save change successfully."
+                                                            },
+                                                            error: (err: unknown) => catchError(err),
+                                                        }
+                                                    )
+                                                })
+                                            }}
+                                        >
+                                            Block
+                                        </DropdownMenuItem>
+                                    )}
                                 </>
                             )}
                         </DropdownMenuContent>
@@ -226,7 +271,7 @@ export function UserTableShell() {
                 ),
             },
         ],
-        [users]
+        [users,trigger]
     )
 
     function deleteSelectedRows() {

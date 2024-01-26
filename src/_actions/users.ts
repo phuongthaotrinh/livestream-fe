@@ -14,7 +14,8 @@ const apiUrl = {
     getOne: 'user/user-by-id',
     delete: 'user/user-delete',
     updateProfile: 'user/update-profile',
-
+    blockUser:"user/block-user",
+    unblockUser:"user/unblock-user",
     //group
     createUserToGroup: 'user/add-new-child',
     getAllMemberInGroup: 'user/get-all-member-in-group',
@@ -210,6 +211,27 @@ const useApiUsers = () => {
             throw error;
         }
     };
+
+    // block user
+    const blockUser = async (user_id:number) => {
+        try {
+            const response = await axiosInstance.get(`${apiUrl.blockUser}/${user_id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+    const unblockUser = async (user_id:number) => {
+        try {
+            const response = await axiosInstance.get(`${apiUrl.unblockUser}/${user_id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+
     return {
         createUser,
         getUsers,
@@ -221,7 +243,9 @@ const useApiUsers = () => {
         removeMemberToGroup,
         userCanAddInGroupAndUserInGroup,
         addUserPermission,
-        getAllPermissionBelongToUser
+        getAllPermissionBelongToUser,
+        blockUser,
+        unblockUser
     };
 };
 
