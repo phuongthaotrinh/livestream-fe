@@ -3,7 +3,7 @@ import {RolesPageTemplate} from "@/components/admin/roles/template/role-page-tem
 import {Metadata} from "next";
 
 export const metadata: Metadata = {
-    title: "Admin| Role",
+    title: "Admin| Roles & Permissions",
     description: "make streaming easier with us",
 }
 export default function RolesPage() {

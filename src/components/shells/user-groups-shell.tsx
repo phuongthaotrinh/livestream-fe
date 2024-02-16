@@ -179,7 +179,6 @@ export function UserGroupsShell({data,showCreateBtn,userId,setTrigger}: UserGrou
 
             { showCreateBtn ?  (<DataTableRaw columns={column}
                              data={data}
-                             showToolbar={true}
                              searchableColumns={[
                                  {
                                      id:"name",
@@ -193,7 +192,6 @@ export function UserGroupsShell({data,showCreateBtn,userId,setTrigger}: UserGrou
             /> ):(
                 <DataTableRaw columns={column}
                               data={data}
-                              showToolbar={true}
                               searchableColumns={[
                                   {
                                       id:"name",

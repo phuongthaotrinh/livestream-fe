@@ -16,24 +16,26 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/common/ui/dropdown-menu"
-import {DataTable} from "@/components/common/data-table"
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header"
+import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
+import {useApiAdditional} from "@/_actions/additional";
 
-interface IPNewsTableShell {
-    data: any[]
-    pageCount: number
-}
+export  function NewsTableShell() {
+    const {getNews} = useApiAdditional();
+    const [data, setData] = React.useState<any[]>([]);
 
-export  function NewsTableShell({
-                                    data,
-                                    pageCount,
-                                }: IPNewsTableShell) {
+    React.useEffect(() => {
+        (async () => {
+            const {data} = await getNews();
+            setData(data)
+        })()
+    }, [])
+
+
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
 
-    function deleteProductAction({id}: any) {
 
-    }
 
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo<ColumnDef<any, unknown>[]>(
@@ -151,66 +153,18 @@ export  function NewsTableShell({
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator/>
-                            <DropdownMenuItem
-                                onClick={() => {
-                                    startTransition(() => {
-                                        row.toggleSelected(false)
-                                        // @ts-ignore
-                                        toast.promise((deleteUser({id: row.original.id})),
-                                            {
-                                                loading: "Deleting...",
-                                                success: () => "Product deleted successfully.",
-                                                error: (err: unknown) => catchError(err),
-                                            }
-                                        )
-
-                                    })
-                                }}
-                                disabled={isPending}
-                            >
-                                Delete
-                                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-                            </DropdownMenuItem>
                         </DropdownMenuContent>
-
                     </DropdownMenu>
-
-
                 ),
             },
         ],
         [data, isPending]
     )
 
-    function deleteSelectedRows() {
-        toast.promise(
-            Promise.all(
-                selectedRowIds.map((id) =>
-                    deleteProductAction({
-                        id,
-                    })
-                )
-            ),
-            {
-                loading: "Deleting...",
-                success: () => {
-                    setSelectedRowIds([])
-                    return "Products deleted successfully."
-                },
-                error: (err: unknown) => {
-                    setSelectedRowIds([])
-                    return catchError(err)
-                },
-            }
-        )
-    }
-
-
     return (
-        <DataTable
+        <DataTableRaw
             columns={columns}
             data={data}
-            pageCount={pageCount}
             searchableColumns={[
                 {
                     id: "title",
@@ -218,7 +172,8 @@ export  function NewsTableShell({
                 },
             ]}
             newRowLink={`/admin/news/create`}
-            deleteRowsAction={() => void deleteSelectedRows()}
+            nameExport="news"
+
         />
     )
 }

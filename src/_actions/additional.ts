@@ -14,9 +14,10 @@ const apiUrl = {
     //group
     updateStateGroup: 'additional/add-or-uodate-group',
     getGroups: 'additional/get-group',
-    getGroup: 'additional/get-group'
+    getGroup: 'additional/get-group',
 
-
+    // import-excel
+    importExcel:'additional/import-excel'
 }
 
 
@@ -117,8 +118,6 @@ export const useApiAdditional = () => {
         console.log('getGroup_payload', payload)
         const {data: allGroups} = await getGroups();
          const group = allGroups?.find((item: any) => item.id == Number(payload));
-         const members = []
-        console.log('getGroup___group', group)
         let data: any = {
             group: {},
             user: {},
@@ -130,6 +129,18 @@ export const useApiAdditional = () => {
 
         return data
     }
+
+    const importExcel = async (body: any) => {
+        try {
+            const response = await axiosInstance.post(apiUrl.importExcel, body);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    }
+
+
     return {
         createSliders,
         getSliders,
@@ -137,7 +148,8 @@ export const useApiAdditional = () => {
         getNews,
         updateStateGroups,
         getGroups,
-        getGroup
+        getGroup,
+        importExcel
     };
 };
 // export default useApiAdditional;

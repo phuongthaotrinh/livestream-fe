@@ -42,7 +42,7 @@ export function RegisterFormShell ({data, setTrigger, isClientMode}:IRegisterFor
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [detailForm, setDetailForm]= React.useState<any>(undefined)
-
+    const [formId, setFormId]= React.useState<number | null>(null)
     const ref = React.useRef<HTMLDivElement>(null)
 
     const handleStt = (status:any, id:any) => {
@@ -128,29 +128,6 @@ export function RegisterFormShell ({data, setTrigger, isClientMode}:IRegisterFor
                 },
             },
             {
-                accessorKey: "form_id",
-                header: ({column}) => (
-                    <DataTableColumnHeader column={column} title="form_id"/>
-
-                ),
-                cell: ({row}) => {
-                    const id = row.original.id as string;
-                    return (
-                        <div className=" truncate ">
-                            {row.getValue("form_id")}
-                        </div>
-                    )
-                },
-            },
-            {
-                accessorKey: "form_field_id",
-                header: ({column}) => (
-                    <DataTableColumnHeader column={column} title="form_field_id"/>
-                ),
-                cell: ({row}) =>
-                    <div>{row.getValue("form_field_id")}</div>,
-            },
-            {
                 accessorKey: "user",
                 header: ({column}) => (
                     <DataTableColumnHeader column={column} title="user"/>
@@ -224,11 +201,8 @@ export function RegisterFormShell ({data, setTrigger, isClientMode}:IRegisterFor
                                         </Button>
                                     </Popconfirm>
                                     <Button onClick={() => {
-                                        startTransition(async () => {
-                                            const {data}  = await getFormData({ form_id:row?.original.id});
-                                            setDetailForm(data?.field_data )
-                                        });
-                                        setOpen(!open)
+                                        setFormId(id)
+                                        setOpen(true)
                                     }} >
                                         Watch
                                     </Button>
@@ -239,11 +213,8 @@ export function RegisterFormShell ({data, setTrigger, isClientMode}:IRegisterFor
 
 
                               <Button onClick={() => {
-                                  startTransition(async () => {
-                                              const {data}  = await getFormData({ form_id:row?.original.id});
-                                              setDetailForm(data?.field_data )
-                                  });
-                                  setOpen(!open)
+                                  setOpen(!open);
+                                  setFormId(row?.original.id)
                               }} >
                                   Watch
                               </Button>
@@ -255,11 +226,17 @@ export function RegisterFormShell ({data, setTrigger, isClientMode}:IRegisterFor
                 }
 
             },
-
-
         ],
         [data, selectedRowIds]
     )
+    React.useEffect(() => {
+        if(formId) {
+            startTransition(async () => {
+                const {data}  = await getFormData({ form_id:formId});
+                 setDetailForm(data?.[0]?.field_data)
+            });
+        }
+    },[formId])
     React.useEffect(() => {
         const handleEsc = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -279,17 +256,18 @@ export function RegisterFormShell ({data, setTrigger, isClientMode}:IRegisterFor
             setOpen(false);
             setDetailForm(undefined)
         },
-    })
+    });
+
     return (
         <>
-            <DataTableRaw columns={columns} data={data ? data :[]} showToolbar={false}/>
-         <div ref={ref}>
+            <DataTableRaw columns={columns} data={data ? data :[]}/>
+            <div ref={ref}>
              <Dialog open={open} onOpenChange={() => {setOpen(false); setDetailForm(undefined)}}>
                  <DialogContent className="sm:max-w-screen-md">
                      <DialogHeader>
-                         <DialogTitle>Edit profile</DialogTitle>
+                         <DialogTitle>Detail Form</DialogTitle>
                          <DialogDescription>
-                             Make changes to your profile here. Click save when  done.
+                             You can watch your form field data
                          </DialogDescription>
                      </DialogHeader>
 

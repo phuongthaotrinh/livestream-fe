@@ -192,6 +192,7 @@ export default function EditPromissionForRole({
                 />
                 <ShellAction href="/admin/roles" actionName="Back"/>
             </Space>
+
             <div className="container space-y-6">
                 <ShellAction actionName="Assign new permissions" icon={PlusCircle}
                              actionVoid={() => setOpen(true)}/>
@@ -225,7 +226,7 @@ export default function EditPromissionForRole({
                     />
 
                 </Modal>
-                <DataTableRaw columns={column} data={permissionsOfRole} showToolbar={true}/>
+                <DataTableRaw columns={column} data={permissionsOfRole}/>
             </div>
 
         </>

@@ -31,8 +31,7 @@ export function InfoCard ({data}:{data:IDetailUser}) {
                         <ShellAction flex="start" type="link" key="profile_detail" actionName="Edit profile"
                                      icon={Pencil}
                                      href={{
-                                         pathname: `${pathname}/edit`,
-                                         query: {data: JSON.stringify(data, null, 2)},
+                                         pathname: `${pathname}/edit`
                                      }}
                         />
 

@@ -1,9 +1,12 @@
-'use client';
+
 
 import {AdminLayout} from "@/layouts/admin/layout"
-import {PlatformProviders} from "@/lib/context/PlatformProvider";
 import * as React from "react";
-
+import {Metadata} from "next";
+export const metadata: Metadata = {
+    title: "Admin",
+    description: "make streaming easier with us",
+}
 export default function AdminLayoutTemplate({
                                         children,
                                     }: {

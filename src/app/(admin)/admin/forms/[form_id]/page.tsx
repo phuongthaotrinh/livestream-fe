@@ -1,5 +1,3 @@
-'use client';
-
 import  FSubmissionForm from "@/components/form/submission-form"
 interface IParams{
     params: {

@@ -3,7 +3,7 @@
 import {DataTableRaw} from "@/components/common/data-table/data-table-raw";
 import * as React from "react";
 import {ColumnDef} from "@tanstack/react-table";
-import { Modal} from "antd";
+import { Modal, Card} from "antd";
 import {DataTableColumnHeader} from "@/components/common/data-table/components/column-header";
 import Link from "next/link";
 import {catchError, formatDate,toSentenceCase} from "@/lib/helpers";
@@ -15,12 +15,12 @@ import {ILiveStreamType, livesStreamTypeSchema} from "@/lib/validation/live-stre
 import useApiPlatform from "@/_actions/platforms";
 import {toast} from "react-hot-toast";
 import {Checkbox} from "@/components/common/ui/checkbox"
-interface ILiveStreamTypeShell {
-    data: ILiveStreamType[],
-    setTrigger: React.Dispatch<React.SetStateAction<boolean>>
-}
+import {usePlatform} from "@/lib/hooks/use-platform";
 
-export function LiveStreamTypeShell({data, setTrigger}: ILiveStreamTypeShell) {
+
+export function LiveStreamTypeShell() {
+    const {liveStreamTypeData:data, setTrigger} = usePlatform()
+
     const [isPending, startTransition] = React.useTransition()
     const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
     const [open, setOpen] = React.useState<boolean>(false);
@@ -76,10 +76,7 @@ export function LiveStreamTypeShell({data, setTrigger}: ILiveStreamTypeShell) {
                     const id = row.original.id as string;
                     return (
                         <div className="truncate ">
-                            <Link href={`/admin/news/${id}`}>
-
                                 {row.getValue("name")}
-                            </Link>
                         </div>
                     )
                 },
@@ -124,17 +121,22 @@ export function LiveStreamTypeShell({data, setTrigger}: ILiveStreamTypeShell) {
     }
 
     return (
-        <>
-            <div className="flex justify-end mb-3">
-                <ShellAction actionName="Create" icon={PlusCircle} type="action" actionVoid={() => setOpen(true)}/>
+        <Card>
                 <Modal title="Create" footer={null} open={open} onCancel={() => {
                     form.resetFields();
                     setOpen(false)
                 }}>
                     <LiveStreamTypeForm form={form} rule={rule} onFinish={onFinish} isPending={isPending}/>
                 </Modal>
-            </div>
-            <DataTableRaw data={data} showToolbar={false} columns={columns}/>
-        </>
+            <DataTableRaw data={data}
+                          columns={columns}
+                          searchableColumns={[
+                              {
+                                  id: "name",
+                                  title: "name",
+                              },
+                          ]}
+                          newRowAction={() => setOpen(true)}/>
+        </Card>
     )
 }

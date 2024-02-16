@@ -12,13 +12,14 @@ const apiUrl = {
     getAllPermisstion: 'role-per/get-all-permission',
 
     assignRoleForPermission:'role-per/assign-role-for-per',
-
     getPermissionOfRole:'role-per/get-per-belong-to-role',
 
 
     //assign role for user
     assignRoleForUser: 'role-per/assign-role-for-user',
-    getRoleOfUser: 'role-per/get-role-belong-to-user'
+    getRoleOfUser: 'role-per/get-role-belong-to-user',
+    deletePermission: 'role-per/delete-permission',
+    unAssignRoleForUser:'role-per/remove-role-for-user',
 }
 
 
@@ -129,6 +130,24 @@ const useApiRoles = () => {
         }
     };
 
+    const deletePer = async (payload: number) => {
+        try {
+            const response = await axiosInstance.delete(`${apiUrl.deletePermission}/${payload}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+    const unAssignRoleForUser = async (body: any) => {
+        try {
+            const response = await axiosInstance.put(apiUrl.unAssignRoleForUser, body);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
     return {
         createRole,
         getRoles,
@@ -136,7 +155,9 @@ const useApiRoles = () => {
         getAllPermisstion,
         assignRoleForPermission,
         getPermissionOfRole,
-        assignRoleForUser
+        assignRoleForUser,
+        deletePer,
+        unAssignRoleForUser
     };
 };
 

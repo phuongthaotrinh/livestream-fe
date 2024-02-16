@@ -18,7 +18,7 @@ import {catchError} from "@/lib/helpers";
 
 export function PermissionTemplate () {
     const router = useRouter();
-    const {getAllPermisstion, createPermisstion} = useApiRoles();
+    const {getAllPermisstion, createPermisstion, deletePer} = useApiRoles();
     const [open, setOpen] = React.useState<boolean>(false);
     const [form] = Form.useForm();
     const [permissions, setPermissions]= React.useState<any[]>([]);
@@ -37,8 +37,27 @@ export function PermissionTemplate () {
     },[trigger, mount])
 
 
+
     const deleteMany = () => {
-        toast.error(`feature not enable, delete ${selectedRowIds.length} item`)
+        toast.promise(
+            Promise.all(
+                selectedRowIds.map((id) =>
+                    deletePer( id  )
+                )
+            ),
+            {
+                loading: "Deleting...",
+                success: () => {
+                    setSelectedRowIds([]);
+                    setTrigger(true)
+                    return "Products deleted successfully."
+                },
+                error: (err: unknown) => {
+                    setSelectedRowIds([])
+                    return catchError(err)
+                },
+            }
+        )
     }
 
 
@@ -105,7 +124,16 @@ export function PermissionTemplate () {
                                     title="Delete the task"
                                     description="Are you sure to delete this task?"
                                     onConfirm={() => {
-                                        toast.error(`feature not enable : ${row.original.id}`)
+                                        startTransition(() => {
+                                            toast.promise((deletePer((row.original.id))),{
+                                                loading: "Loading....",
+                                                success:(data:any) => {
+                                                    setTrigger(true)
+                                                    return "Success"
+                                                },
+                                                error:(err:any) => catchError(err)
+                                            })
+                                        })
                                     }}
                                     okText="Yes"
                                     cancelText="No"
@@ -133,6 +161,7 @@ export function PermissionTemplate () {
                 success:() => {
                     setTrigger(true);
                     setOpen(false);
+                    form.resetFields();
                     return "create success"
                 }
             })
@@ -142,39 +171,36 @@ export function PermissionTemplate () {
 
     return (
         <>
-         <div className="flex items-center justify-between">
-             <PageHeader title="Manager permissions"  desc="Create, Update, Read all permissions"/>
-               <div className="max-w-screen-sm">
-                   <ShellAction actionName="Back" actionVoid={() => router.back()}  />
-               </div>
-         </div>
-        <div className="space-y-3">
-            <Modal open={open} onCancel={() => setOpen(false)} title="New permission" okType="dashed" footer={null}>
-                    <Form form={form} layout="vertical" onFinish={onFinish}>
-                            <Form.Item label="Name" name="name">
-                                 <Input placeholder="permission 1"/>
+            <div className="flex items-center justify-between w-full mb-7">
+                <PageHeader title="Manager permissions"  desc="Create, Update, Read all permissions"/>
+                <ShellAction actionName="Back" actionVoid={() => router.back()}  />
+            </div>
+            <div className="space-y-3">
+                <Modal open={open} onCancel={() => setOpen(false)} title="New permission" okType="dashed" footer={null}>
+                        <Form form={form} layout="vertical" onFinish={onFinish}>
+                                <Form.Item label="Name" name="name">
+                                     <Input placeholder="permission 1"/>
+                                </Form.Item>
+                            <Form.Item colon={true}>
+                                <Button htmlType="submit" type="default">
+                                    Submit
+                                </Button>
                             </Form.Item>
-                        <Form.Item colon={true}>
-                            <Button htmlType="submit" type="default">
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Form>
-            </Modal>
+                        </Form>
+                </Modal>
 
-            <DataTableRaw columns={columns}
-                          data={permissions}
-                          showToolbar={true}
-                          deleteRowsAction={() => void deleteMany()}
-                          searchableColumns={[
-                              {
-                                  id:"name",
-                                  title:"name"
-                              }
-                          ]}
-                          newRowAction={() => void setOpen(true)}
-            />
-        </div>
+                <DataTableRaw columns={columns}
+                              data={permissions}
+                              deleteRowsAction={() => void deleteMany()}
+                              searchableColumns={[
+                                  {
+                                      id:"name",
+                                      title:"name"
+                                  }
+                              ]}
+                              newRowAction={() => void setOpen(true)}
+                />
+            </div>
         </>
     )
 }

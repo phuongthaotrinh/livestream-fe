@@ -48,11 +48,9 @@ export default function NewsDetail() {
 
     return (
         <>
-            <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
+            <div className="flex items-center justify-between w-full mb-7">
                 <PageHeader title="Update" desc={`Update item: ${id}`}/>
-                <div className="flex justify-end">
-                    <ShellAction actionName="Back" type="link" href={'/admin/news'}/>
-                </div>
+                <ShellAction href="/admin/news" actionName="Back"/>
             </div>
             <div className="my-6">
                 <NewsForm onFinish={onFinish} form={form} setImages={setImages} images={images} rule={rule}

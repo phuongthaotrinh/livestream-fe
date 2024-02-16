@@ -28,11 +28,9 @@ export default function SlidersCreatePage() {
 
     return (
         <>
-            <div className="grid justify-between gap-4 items-stretch content-evenly  md:grid-cols-2 sm:grid-cols-1">
+            <div className="flex items-center justify-between w-full my-5">
                 <PageHeader title="Create" desc="create new news"/>
-                <div className="flex justify-end">
-                    <ShellAction href="/admin/sliders" actionName="Back" type="link"/>
-                </div>
+                <ShellAction href="/admin/sliders" actionName="Back" type="link"/>
             </div>
             <div className="my-6">
                 <SliderForm onFinish={onFinish} form={form} handleReset={handleReset} setImages={setImages}
